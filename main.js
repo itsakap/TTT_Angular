@@ -1,6 +1,9 @@
 var app = angular.module('TTT',[]);
   
 app.controller ('BoardCtrl', function($scope,$timeout) {
+  $scope.startGame = function(){
+    alert('heythere');
+  };
   $scope.newGame = function(){
     turns = 0; playerOnesTurn=true;
     $scope.board = [['','',''],['','',''],['','','']];
@@ -36,7 +39,12 @@ app.controller ('BoardCtrl', function($scope,$timeout) {
     playerOnesTurn = !playerOnesTurn;
   }
 })
-
+app.directive('intro',function(){
+  return{
+    restrict:"E",
+    templateUrl:"title.html"
+  }
+})
 app.directive('board',function(){
   return {
     restrict:"E",

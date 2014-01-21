@@ -1,0 +1,25 @@
+<html>
+  <head>
+    <link rel = "stylesheet" type = "text/css" href = "style.css"/>
+    <script src = "angular.min.js"></script>
+    <script src = "main.js"></script>
+  </head>
+  <body>
+    <img src = "img/RDR.png"/>
+    <div ng-app="TTT" ng-controller = "BoardCtrl" id = "board">
+      <!-- the other templates with corresponding directives could go here
+      <ul>
+        <li ng-repeat = "row in board track by $index">
+          <span ng-repeat = "column in row track by $index"
+          ng-class = "{x : column=='x',
+                      o : column=='o'}"
+          ng-click = "playMove($parent.$index, $index)">
+          </span>
+        </li>
+      </ul>-->
+      <board></board>
+      <button x-ng-click = "newGame()">Reset</button>
+
+    </div>
+  </body>
+</html>

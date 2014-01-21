@@ -2,17 +2,17 @@
   <head>
     <link rel = "stylesheet" type = "text/css" href = "style.css"/>
     <script src = "angular.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.8/angular-animate.min.js"></script>
     <script src = "main.js"></script>
   </head>
   <body>
     <img src = "img/RDR.png"/>
     <div ng-app="TTT" ng-controller = "BoardCtrl" id = "board">
       <div x-ng-switch on="tog">
-        <intro x-ng-switch-when="true"></intro>
-        <board x-ng-switch-when="false"></board>
+        <intro x-ng-switch-when="0"></intro>
+        <characters x-ng-switch-when = "1"></characters>
+        <board x-ng-switch-when="2"></board>
       </div>
-      <!-- <board></board> -->
-      
     </div>
   </body>
 </html>

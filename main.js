@@ -1,9 +1,9 @@
-var app = angular.module('TTT',[]);
+var app = angular.module('TTT',["ngAnimate"]);
   
 app.controller ('BoardCtrl', function($scope,$timeout) {
-  $scope.tog = true;
+  $scope.tog = 0;
   $scope.start = function(){
-    $scope.tog = !$scope.tog;
+    $scope.tog++;
   };
   $scope.newGame = function(){
     turns = 0; playerOnesTurn=true;
@@ -43,13 +43,19 @@ app.controller ('BoardCtrl', function($scope,$timeout) {
 app.directive('intro',function(){
   return{
     restrict:"E",
-    templateUrl:"title.html"
+    templateUrl:"intro.html"
+  } 
+})
+app.directive('characters',function(){
+  return{
+    restrict:"E",
+    templateUrl:"characters.html"
   }
 })
 app.directive('board',function(){
   return {
     restrict:"E",
-    templateUrl: 'board.html'
+    templateUrl: "board.html"
 
   }
 

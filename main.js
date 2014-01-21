@@ -1,8 +1,9 @@
 var app = angular.module('TTT',[]);
   
 app.controller ('BoardCtrl', function($scope,$timeout) {
-  $scope.startGame = function(){
-    alert('heythere');
+  $scope.tog = true;
+  $scope.start = function(){
+    $scope.tog = !$scope.tog;
   };
   $scope.newGame = function(){
     turns = 0; playerOnesTurn=true;

@@ -7,7 +7,10 @@
   <body>
     <img src = "img/RDR.png"/>
     <div ng-app="TTT" ng-controller = "BoardCtrl" id = "board">
-      <intro></intro>
+      <div x-ng-switch on="tog">
+        <intro x-ng-switch-when="true"></intro>
+        <board x-ng-switch-when="false"></board>
+      </div>
       <!-- <board></board> -->
       
     </div>

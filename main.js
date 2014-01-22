@@ -1,6 +1,9 @@
-var app = angular.module('TTT',["ngAnimate"]);
+var app = angular.module('TTT',[]);
   
 app.controller ('BoardCtrl', function($scope,$timeout) {
+  $scope.xOffset = 0;
+  $scope.yOffset = 0;
+  $scope.carouselOffset = {backgroundPosition:$scope.xOffset+"px "+$scope.yOffset+"px"};
   $scope.tog = 0;
   $scope.start = function(){
     $scope.tog++;
@@ -23,6 +26,14 @@ app.controller ('BoardCtrl', function($scope,$timeout) {
       turns++;
       endTurn(c,r,piece);
     }
+  }
+  $scope.goLeft = function(){
+    alert('previous queen...');
+  }
+  $scope.goRight = function(){
+    $scope.xOffset -=256;
+    $scope.xOffset %=3584;
+    $scope.carouselOffset = {backgroundPosition:$scope.xOffset+"px "+$scope.yOffset+"px"};
   }
   function endTurn(c,r,p){
     var horWin = true, vertWin = true, diag1Win = true, diag2Win = true, bd = $scope.board, catsGame = (turns==9);
@@ -59,4 +70,14 @@ app.directive('board',function(){
 
   }
 
+})
+app.directive('bgpos',function(){
+  return{
+    restrict:"C",
+    link:function(scope,element,attrs){
+      element[0].style.backgroundPosition = "-256px 0px"
+        console.log(element[0].style.backgroundPosition);
+        console.log(scope,element,attrs);
+    }
+  }
 })

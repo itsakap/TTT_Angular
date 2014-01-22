@@ -38,11 +38,24 @@ li{
 }
 .x{
   background: yellow;
+
 }
 .o{
   background:purple;
 }
+/*begin sprite carousel*/
+#togLeft,#togRight{
+  display:inline-block;
+}
+#carousel{
+  width:256px;
+  height:256px;
+  display:inline-block;
+  background:url(img/season-6-contestants-onerow.jpg) no-repeat;
 
+
+}
+/*end sprite carousel*/
 @media screen and (max-width:720px){
   ul{
     width:300px;

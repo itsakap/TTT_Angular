@@ -1,13 +1,25 @@
-var app = angular.module('TTT',["ngRoute"]);
+var app = angular.module('TTT',[]);
   
 app.controller ('BoardCtrl', function($scope,$timeout) {
-  var names = ["Milk","April Carrion","Vi Vacious", "Adore Delano", "Joslyn Fox","Bianca del Rio", "Courtney Act", "Miss Darienne Lake", "Laganja Estranja", "Gia Gunn", "Magnolia Crawford", "Trinity K. Bonet", "Kelly Mantle", "Ben DeLaCreme"];
+  $scope.names = [{name: "Milk"},
+  {name: "April Carrion"},
+  {name: "Vi Vacious"},
+  {name: "Adore Delano"},
+  {name: "Joslyn Fox"},
+  {name: "Bianca del Rio"},
+  {name: "Courtney Act"},
+  {name: "Miss Darienne Lake"},
+  {name: "Laganja Estranja"},
+  {name: "Gia Gunn"},
+  {name: "Magnolia Crawford"},
+  {name: "Trinity K. Bonet"},
+  {name: "Kelly Mantle"},
+  {name: "Ben DeLaCreme"}
+  ];
 
   $scope.players = [{charselection:0},{charselection:-256}];
 
-
   $scope.pageToggle = 0;
-  $scope.xoo = {ass:"yeah"};
 
   $scope.start = function(){
     for(var i = 0; i < $scope.players.length; i++){
@@ -64,37 +76,25 @@ app.directive('characters',function(){
       xoffset:"="
     },
     link:function(scope){
+      scope.charname = scope.charname = scope.$parent.names[Math.abs(scope.xoffset/256)].name;
       scope.carouseloff = {backgroundPosition:scope.xoffset+"px 0px"};
       scope.goLeft = function(){
-        scope.xoffset += 256;
-        scope.xoffset -= 3584;
+        scope.xoffset -= 3328;
         scope.xoffset %= 3584;
-        scope.$watch('xoffset',function(oldVal,newVal){
-          scope.carouseloff = {backgroundPosition:newVal + "px 0px"};
-      });
+        scope.carouseloff ={backgroundPosition:scope.xoffset + "px 0px"};
+        scope.charname = scope.$parent.names[Math.abs(scope.xoffset/256)].name;
+
       }
       scope.goRight = function(){
-        
         scope.xoffset -= 256;
         scope.xoffset %= -3584;
-        
-        scope.$watch('xoffset',function(oldVal,newVal){
-        scope.carouseloff = {backgroundPosition:newVal + "px 0px"};
-        
-      });
+        scope.carouseloff ={backgroundPosition:scope.xoffset + "px 0px"};
+        console.log(scope.$parent.names);
+        scope.charname = scope.$parent.names[Math.abs(scope.xoffset/256)].name;
       }
-      scope.$watch('xoffset',function(oldVal,newVal){
-        scope.carouseloff = {backgroundPosition:newVal + "px 0px"};
-        
-        
-      });
-      }
-      
-      
-      }
-    
-
+    }
   }
+}
 )
 app.directive('board',function(){
   return {

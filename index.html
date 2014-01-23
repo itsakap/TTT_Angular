@@ -2,15 +2,22 @@
   <head>
     <link rel = "stylesheet" type = "text/css" href = "style.css"/>
     <script src = "angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.8/angular-route.min.js"></script>
     <!--<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.8/angular-animate.min.js"></script>-->
     <script src = "main.js"></script>
   </head>
   <body>
     <img src = "img/RDR.png"/>
     <div ng-app="TTT" ng-controller = "BoardCtrl" id = "board">
-      <div x-ng-switch on="tog">
+        
+       
+      <div x-ng-switch on="pageToggle">
         <intro x-ng-switch-when="0"></intro>
-        <characters x-ng-switch-when = "1"></characters>
+        <div x-ng-switch-when = "1">
+          <characters xoffset = "players[0].charselection"></characters>
+          <characters xoffset = "players[1].charselection"></characters> 
+          <button x-ng-click = "start()">Get into it, hunty</button>
+        </div>
         <board x-ng-switch-when="2"></board>
       </div>
     </div>

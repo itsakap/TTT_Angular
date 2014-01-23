@@ -1,13 +1,21 @@
-var app = angular.module('TTT',[]);
+var app = angular.module('TTT',["ngRoute"]);
   
 app.controller ('BoardCtrl', function($scope,$timeout) {
-  $scope.xOffset = 0;
-  $scope.yOffset = 0;
-  $scope.carouselOffset = {backgroundPosition:$scope.xOffset+"px "+$scope.yOffset+"px"};
-  $scope.tog = 0;
+  var names = ["Milk","April Carrion","Vi Vacious", "Adore Delano", "Joslyn Fox","Bianca del Rio", "Courtney Act", "Miss Darienne Lake", "Laganja Estranja", "Gia Gunn", "Magnolia Crawford", "Trinity K. Bonet", "Kelly Mantle", "Ben DeLaCreme"];
+
+  $scope.players = [{charselection:0},{charselection:-256}];
+
+
+  $scope.pageToggle = 0;
+  $scope.xoo = {ass:"yeah"};
+
   $scope.start = function(){
-    $scope.tog++;
+    for(var i = 0; i < $scope.players.length; i++){
+      console.log($scope.players[i].charselection);
+    }
+    $scope.pageToggle++;
   };
+
   $scope.newGame = function(){
     turns = 0; playerOnesTurn=true;
     $scope.board = [['','',''],['','',''],['','','']];
@@ -16,7 +24,7 @@ app.controller ('BoardCtrl', function($scope,$timeout) {
   var endGame = function(msg){
     $timeout(function(){alert(msg);
     $scope.newGame();},500);
-  }
+  };
   $scope.playMove = function(c,r){
     var weJustClickedOn = $scope.board[c][r];
     var p = playerOnesTurn;
@@ -26,15 +34,8 @@ app.controller ('BoardCtrl', function($scope,$timeout) {
       turns++;
       endTurn(c,r,piece);
     }
-  }
-  $scope.goLeft = function(){
-    alert('previous queen...');
-  }
-  $scope.goRight = function(){
-    $scope.xOffset -=256;
-    $scope.xOffset %=3584;
-    $scope.carouselOffset = {backgroundPosition:$scope.xOffset+"px "+$scope.yOffset+"px"};
-  }
+  };
+
   function endTurn(c,r,p){
     var horWin = true, vertWin = true, diag1Win = true, diag2Win = true, bd = $scope.board, catsGame = (turns==9);
     for (var i = 0; i < 3; i++){
@@ -45,12 +46,10 @@ app.controller ('BoardCtrl', function($scope,$timeout) {
     }
     if(horWin || vertWin || diag1Win || diag2Win) endGame(p + ' winned!');
     else if(catsGame) endGame('cats game :(');
-    else beginNewTurn();
-  }
-  function beginNewTurn(){
-    playerOnesTurn = !playerOnesTurn;
-  }
-})
+    else playerOnesTurn = !playerOnesTurn; //new turn
+  };
+
+});
 app.directive('intro',function(){
   return{
     restrict:"E",
@@ -60,9 +59,43 @@ app.directive('intro',function(){
 app.directive('characters',function(){
   return{
     restrict:"E",
-    templateUrl:"characters.html"
+    templateUrl:"characters.html",
+    scope:{
+      xoffset:"="
+    },
+    link:function(scope){
+      scope.carouseloff = {backgroundPosition:scope.xoffset+"px 0px"};
+      scope.goLeft = function(){
+        scope.xoffset += 256;
+        scope.xoffset -= 3584;
+        scope.xoffset %= 3584;
+        scope.$watch('xoffset',function(oldVal,newVal){
+          scope.carouseloff = {backgroundPosition:newVal + "px 0px"};
+      });
+      }
+      scope.goRight = function(){
+        
+        scope.xoffset -= 256;
+        scope.xoffset %= -3584;
+        
+        scope.$watch('xoffset',function(oldVal,newVal){
+        scope.carouseloff = {backgroundPosition:newVal + "px 0px"};
+        
+      });
+      }
+      scope.$watch('xoffset',function(oldVal,newVal){
+        scope.carouseloff = {backgroundPosition:newVal + "px 0px"};
+        
+        
+      });
+      }
+      
+      
+      }
+    
+
   }
-})
+)
 app.directive('board',function(){
   return {
     restrict:"E",

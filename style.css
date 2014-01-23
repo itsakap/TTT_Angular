@@ -44,8 +44,23 @@ li{
   background:purple;
 }
 /*begin sprite carousel*/
+#haha{
+  width:340px;
+  height:300px;
+  margin:0 auto;
+  position:relative;
+}
+#haha p {
+  position:absolute;
+  bottom:0;
+  width:100%;
+}
 #togLeft,#togRight{
-  display:inline-block;
+  height:256px;
+  width:30px;
+  position:relative;
+  top:-125px;
+
 }
 #carousel{
   width:256px;

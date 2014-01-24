@@ -27,8 +27,8 @@ ul{
   list-style: none;
   margin:0 auto;
   padding:0;
-  width:420px;
-  height:420px;
+  width:300px;
+  height:300px;
 }
 li{
   margin:0;
@@ -37,13 +37,13 @@ li{
   width:100%;
 }
 .x{
-background:url(img/season-6-contestants-onerow.jpg) no-repeat;
-background-size: cover;
+background:url(img/season-6-contestants-onerow-small.jpg) no-repeat;
+
 
 }
 .o{
-  background:url(img/season-6-contestants-onerow.jpg) no-repeat;
-  background-size: cover;
+  background:url(img/season-6-contestants-onerow-small.jpg) no-repeat;
+
 }
 /*begin sprite carousel*/
 #haha{
@@ -52,23 +52,23 @@ background-size: cover;
   margin:0 auto;
   position:relative;
 }
-#haha p {
+.haha p {
   position:absolute;
   bottom:0;
   width:100%;
 }
-#togLeft,#togRight{
+.togLeft,.togRight{
   height:256px;
   width:30px;
   position:relative;
   top:-125px;
 
 }
-#carousel{
-  width:256px;
-  height:256px;
+.carousel{
+  width:100px;
+  height:100px;
   display:inline-block;
-  background:url(img/season-6-contestants-onerow.jpg) no-repeat;
+  background:url(img/season-6-contestants-onerow-small.jpg) no-repeat;
 
 
 }

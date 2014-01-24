@@ -16,7 +16,7 @@ app.controller ('BoardCtrl', function($scope,$timeout) {
   {name: "Kelly Mantle"},
   {name: "Ben DeLaCreme"}
   ];
-  $scope.players = [{charselection:0},{charselection:-256}];
+  $scope.players = [{charselection:0},{charselection:-100}];
   $scope.pageToggle = 0;
   $scope.start = function(){
     for(var i = 0; i < $scope.players.length; i++){
@@ -25,21 +25,22 @@ app.controller ('BoardCtrl', function($scope,$timeout) {
   };
   $scope.getStyle = function(c){
     if(c=='x'){
-      return {backgroundPosition:$scope.players[0].charselection+"px 0px"}
+      return {backgroundPosition: $scope.players[0].charselection+"px 0px"}
     }
     if(c=='o'){
       return {backgroundPosition:$scope.players[1].charselection+"px 0px"}
     }
   }
+
+
+  //**** BEGIN GAME LOGIC ****//
+
+
   $scope.newGame = function(){
     turns = 0; playerOnesTurn=true;
     $scope.board = [['','',''],['','',''],['','','']];
   };
   $scope.newGame();
-  var endGame = function(msg){
-    $timeout(function(){alert(msg);
-    $scope.newGame();},500);
-  };
   $scope.playMove = function(c,r){
     var weJustClickedOn = $scope.board[c][r];
     var p = playerOnesTurn;
@@ -63,6 +64,10 @@ app.controller ('BoardCtrl', function($scope,$timeout) {
     else if(catsGame) endGame('cats game :(');
     else playerOnesTurn = !playerOnesTurn; //new turn
   };
+  function endGame (msg){
+    $timeout(function(){alert(msg);
+    $scope.newGame();},500);
+  }
 
 });
 app.directive('intro',function(){
@@ -79,21 +84,25 @@ app.directive('characters',function(){
       xoffset:"="
     },
     link:function(scope){
-      scope.charname = scope.charname = scope.$parent.names[Math.abs(scope.xoffset/256)].name;
+      scope.charname = scope.charname = scope.$parent.names[Math.abs(scope.xoffset/100)].name;
       scope.carouseloff = {backgroundPosition:scope.xoffset+"px 0px"};
       scope.goLeft = function(){
-        scope.xoffset -= 3328;
-        scope.xoffset %= 3584;
+        scope.xoffset -= 1300;
+        scope.xoffset %= 1400;
         scope.carouseloff ={backgroundPosition:scope.xoffset + "px 0px"};
-        scope.charname = scope.$parent.names[Math.abs(scope.xoffset/256)].name;
+        scope.charname = scope.$parent.names[Math.abs(scope.xoffset/100)].name;
 
       }
       scope.goRight = function(){
-        scope.xoffset -= 256;
-        scope.xoffset %= -3584;
+
+
+
+        scope.xoffset -= 100;
+        scope.xoffset %= 1400;
         scope.carouseloff ={backgroundPosition:scope.xoffset + "px 0px"};
-        scope.charname = scope.$parent.names[Math.abs(scope.xoffset/256)].name;
+        scope.charname = scope.$parent.names[Math.abs(scope.xoffset/100)].name;
       }
+     
     }
   }
 }

@@ -37,11 +37,13 @@ li{
   width:100%;
 }
 .x{
-  background: yellow;
+background:url(img/season-6-contestants-onerow.jpg) no-repeat;
+background-size: cover;
 
 }
 .o{
-  background:purple;
+  background:url(img/season-6-contestants-onerow.jpg) no-repeat;
+  background-size: cover;
 }
 /*begin sprite carousel*/
 #haha{

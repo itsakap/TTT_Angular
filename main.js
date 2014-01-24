@@ -16,18 +16,21 @@ app.controller ('BoardCtrl', function($scope,$timeout) {
   {name: "Kelly Mantle"},
   {name: "Ben DeLaCreme"}
   ];
-
   $scope.players = [{charselection:0},{charselection:-256}];
-
   $scope.pageToggle = 0;
-
   $scope.start = function(){
     for(var i = 0; i < $scope.players.length; i++){
-      console.log($scope.players[i].charselection);
     }
     $scope.pageToggle++;
   };
-
+  $scope.getStyle = function(c){
+    if(c=='x'){
+      return {backgroundPosition:$scope.players[0].charselection+"px 0px"}
+    }
+    if(c=='o'){
+      return {backgroundPosition:$scope.players[1].charselection+"px 0px"}
+    }
+  }
   $scope.newGame = function(){
     turns = 0; playerOnesTurn=true;
     $scope.board = [['','',''],['','',''],['','','']];
@@ -89,7 +92,6 @@ app.directive('characters',function(){
         scope.xoffset -= 256;
         scope.xoffset %= -3584;
         scope.carouseloff ={backgroundPosition:scope.xoffset + "px 0px"};
-        console.log(scope.$parent.names);
         scope.charname = scope.$parent.names[Math.abs(scope.xoffset/256)].name;
       }
     }
@@ -103,14 +105,4 @@ app.directive('board',function(){
 
   }
 
-})
-app.directive('bgpos',function(){
-  return{
-    restrict:"C",
-    link:function(scope,element,attrs){
-      element[0].style.backgroundPosition = "-256px 0px"
-        console.log(element[0].style.backgroundPosition);
-        console.log(scope,element,attrs);
-    }
-  }
 })

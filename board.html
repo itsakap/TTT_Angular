@@ -1,9 +1,9 @@
 <ul>
   <li ng-repeat = "row in board track by $index">
-    <span ng-repeat = "column in row track by $index"
-    ng-class = "{x : column=='x',
+    <span  x-ng-repeat = "column in row track by $index"
+    x-ng-class = "{x : column=='x',
                 o : column=='o'}"
-    ng-click = "playMove($parent.$index, $index)">
+    x-ng-click = "playMove($parent.$index, $index)"x-ng-style = "getStyle(column)">
     </span>
   </li>
 </ul>

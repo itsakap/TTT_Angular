@@ -1,19 +1,35 @@
 var app = angular.module('TTT',["firebase"]);
   
 app.controller ('BoardCtrl', function($scope,$timeout,$firebase) {
-  var ref = new Firebase("https://tictactohnoshebettadont.firebaseio.com/")
-  $scope.fbRoot = $firebase(ref)
+  var ref = new Firebase("https://tictactohnoshebettadont.firebaseio.com/");//this is my fb
+  $scope.fbRoot = $firebase(ref);
+
+  //wait until everything really is loaded
   $scope.fbRoot.$on("loaded",function(){
     IDs = $scope.fbRoot.$getIndex();
     if(IDs.length == 0){
-      $scope.fbRoot.$add({boxes:[['','',''],['','',''],['','','']],xTurn:true});
+      //no board --> let's build one!
+      $scope.fbRoot.$add({
+        board:[['','',''],['','',''],['','','']],
+        playerOnesTurn:true,
+        playerone:{charselection:0},
+        playertwo:{charselection:-100}
+        turns:0
+      });
+      $scope.fbRoon.$on("change",function(){
+        IDs = $scope.fbRoot.$getIndex();
+        $scope.obj = $scope.fbRoot.$child(IDs[0]);
+      });
+    }
+    else{
+      $scope.obj = $scope.fbRoot.$child(IDs[0]);
     }
   });
-
-  $scope.fbRoot.$on("change",function(){
+//wrong??
+/*  $scope.fbRoot.$on("change",function(){
     IDs = $scope.fbRoot.$getIndex();
     $scope.obj = $scope.fbRoot.$child(IDs[0]);
-  })
+  })*/
 
   $scope.names = [{name: "Milk"},
   {name: "April Carrion"},
@@ -30,13 +46,17 @@ app.controller ('BoardCtrl', function($scope,$timeout,$firebase) {
   {name: "Kelly Mantle"},
   {name: "Ben DeLaCreme"}
   ];
-  $scope.players = [{charselection:0},{charselection:-100}];
+
+
+  //$scope.players = [{charselection:0},{charselection:-100}];
   $scope.pageToggle = 0;
   $scope.start = function(){
     for(var i = 0; i < $scope.players.length; i++){
     }
     $scope.pageToggle++;
   };
+
+  //consider getting other player's charselection
   $scope.getStyle = function(c){
     if(c=='x'){
       return {backgroundPosition: $scope.players[0].charselection+"px 0px"}
@@ -51,10 +71,10 @@ app.controller ('BoardCtrl', function($scope,$timeout,$firebase) {
 
 
   $scope.newGame = function(){
-    turns = 0; playerOnesTurn=true;
+    $scope.obj.turns = 0; playerOnesTurn=true;
     $scope.board = [['','',''],['','',''],['','','']];
   };
-  $scope.newGame();
+  $scope.newGame();  // initialize the variables inside of the newGame function we just created
   $scope.playMove = function(c,r){
     var weJustClickedOn = $scope.board[c][r];
     var p = playerOnesTurn;
@@ -84,6 +104,9 @@ app.controller ('BoardCtrl', function($scope,$timeout,$firebase) {
   }
 
 });
+/****END GAME LOGIC****/
+
+
 app.directive('intro',function(){
   return{
     restrict:"E",

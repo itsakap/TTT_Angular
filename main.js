@@ -13,7 +13,7 @@ app.controller ('BoardCtrl', function($scope,$timeout,$firebase) {
         board:[['','',''],['','',''],['','','']],
         playerOnesTurn:true,
         playerone:{charselection:0},
-        playertwo:{charselection:-100}
+        playertwo:{charselection:-100},
         turns:0
       });
       $scope.fbRoon.$on("change",function(){

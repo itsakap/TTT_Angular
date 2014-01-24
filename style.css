@@ -46,9 +46,9 @@ background:url(img/season-6-contestants-onerow-small.jpg) no-repeat;
 
 }
 /*begin sprite carousel*/
-#haha{
-  width:340px;
-  height:300px;
+.haha{
+  width:250px;
+  height:200px;
   margin:0 auto;
   position:relative;
 }
@@ -58,10 +58,10 @@ background:url(img/season-6-contestants-onerow-small.jpg) no-repeat;
   width:100%;
 }
 .togLeft,.togRight{
-  height:256px;
+  height:100px;
   width:30px;
   position:relative;
-  top:-125px;
+  top:-50px;
 
 }
 .carousel{

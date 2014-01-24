@@ -1,6 +1,20 @@
-var app = angular.module('TTT',[]);
+var app = angular.module('TTT',["firebase"]);
   
-app.controller ('BoardCtrl', function($scope,$timeout) {
+app.controller ('BoardCtrl', function($scope,$timeout,$firebase) {
+  var ref = new Firebase("https://tictactohnoshebettadont.firebaseio.com/")
+  $scope.fbRoot = $firebase(ref)
+  $scope.fbRoot.$on("loaded",function(){
+    IDs = $scope.fbRoot.$getIndex();
+    if(IDs.length == 0){
+      $scope.fbRoot.$add({boxes:[['','',''],['','',''],['','','']],xTurn:true});
+    }
+  });
+
+  $scope.fbRoot.$on("change",function(){
+    IDs = $scope.fbRoot.$getIndex();
+    $scope.obj = $scope.fbRoot.$child(IDs[0]);
+  })
+
   $scope.names = [{name: "Milk"},
   {name: "April Carrion"},
   {name: "Vi Vacious"},

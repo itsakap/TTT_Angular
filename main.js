@@ -16,7 +16,7 @@ app.controller ('BoardCtrl', function($scope,$timeout,$firebase) {
         playertwo:{charselection:-100},
         turns:0
       });
-      $scope.fbRoon.$on("change",function(){
+      $scope.fbRoot.$on("change",function(){
         IDs = $scope.fbRoot.$getIndex();
         $scope.obj = $scope.fbRoot.$child(IDs[0]);
       });
@@ -51,7 +51,7 @@ app.controller ('BoardCtrl', function($scope,$timeout,$firebase) {
   //$scope.players = [{charselection:0},{charselection:-100}];
   $scope.pageToggle = 0;
   $scope.start = function(){
-    for(var i = 0; i < $scope.players.length; i++){
+    for(var i = 0; i < 2; i++){
     }
     $scope.pageToggle++;
   };
@@ -59,10 +59,10 @@ app.controller ('BoardCtrl', function($scope,$timeout,$firebase) {
   //consider getting other player's charselection
   $scope.getStyle = function(c){
     if(c=='x'){
-      return {backgroundPosition: $scope.players[0].charselection+"px 0px"}
+      return {backgroundPosition: $scope.obj.playerone.charselection+"px 0px"}
     }
     if(c=='o'){
-      return {backgroundPosition:$scope.players[1].charselection+"px 0px"}
+      return {backgroundPosition:$scope.obj.playertwo.charselection+"px 0px"}
     }
   }
 
@@ -71,23 +71,24 @@ app.controller ('BoardCtrl', function($scope,$timeout,$firebase) {
 
 
   $scope.newGame = function(){
-    $scope.obj.turns = 0; playerOnesTurn=true;
-    $scope.board = [['','',''],['','',''],['','','']];
+    console.log($scope.obj);
+/*    $scope.obj.turns = 0; $scope.obj.playerOnesTurn=true;
+    $scope.obj.board = [['','',''],['','',''],['','','']]*/;
   };
   $scope.newGame();  // initialize the variables inside of the newGame function we just created
   $scope.playMove = function(c,r){
-    var weJustClickedOn = $scope.board[c][r];
-    var p = playerOnesTurn;
+    var weJustClickedOn = $scope.obj.board[c][r];
+    var p = $scope.obj.playerOnesTurn;
     if(weJustClickedOn == '') {
       var piece = p ? 'x' : 'o';
-      $scope.board[c][r] = piece;
-      turns++;
+      $scope.obj.board[c][r] = piece;
+      $scope.obj.turns++;
       endTurn(c,r,piece);
     }
   };
 
   function endTurn(c,r,p){
-    var horWin = true, vertWin = true, diag1Win = true, diag2Win = true, bd = $scope.board, catsGame = (turns==9);
+    var horWin = true, vertWin = true, diag1Win = true, diag2Win = true, bd = $scope.obj.board, catsGame = ($scope.obj.turns==9);
     for (var i = 0; i < 3; i++){
       if(bd[i][r]!=p) horWin = false;
       if(bd[c][i]!=p) vertWin = false;
@@ -96,7 +97,7 @@ app.controller ('BoardCtrl', function($scope,$timeout,$firebase) {
     }
     if(horWin || vertWin || diag1Win || diag2Win) endGame(p + ' winned!');
     else if(catsGame) endGame('cats game :(');
-    else playerOnesTurn = !playerOnesTurn; //new turn
+    else $scope.obj.playerOnesTurn = !$scope.obj.playerOnesTurn; //new turn
   };
   function endGame (msg){
     $timeout(function(){alert(msg);
@@ -121,7 +122,9 @@ app.directive('characters',function(){
       xoffset:"="
     },
     link:function(scope){
-      scope.charname = scope.charname = scope.$parent.names[Math.abs(scope.xoffset/100)].name;
+      
+      scope.charname = scope.$parent.names[Math.abs(scope.xoffset/100)].name;
+      console.log('how about here?');
       scope.carouseloff = {backgroundPosition:scope.xoffset+"px 0px"};
       scope.goLeft = function(){
         scope.xoffset -= 1300;

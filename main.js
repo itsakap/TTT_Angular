@@ -7,31 +7,18 @@ app.controller ('BoardCtrl', function($scope,$timeout,$firebase) {
   //wait until everything really is loaded
   $scope.fbRoot.$on("loaded",function(){
     IDs = $scope.fbRoot.$getIndex();
-    if(IDs.length == 0){
+
+    if(IDs.length == 0){  
       //no board --> let's build one!
       $scope.fbRoot.$add({
         board:[['','',''],['','',''],['','','']],
         playerOnesTurn:true,
         playerone:{charselection:0},
         playertwo:{charselection:-100},
-        turns:0
-      });
-      $scope.fbRoot.$on("change",function(){
-        IDs = $scope.fbRoot.$getIndex();
-        $scope.obj = $scope.fbRoot.$child(IDs[0]);
-      });
-    }
-    else{
-      $scope.obj = $scope.fbRoot.$child(IDs[0]);
-    }
-  });
-//wrong??
-/*  $scope.fbRoot.$on("change",function(){
-    IDs = $scope.fbRoot.$getIndex();
-    $scope.obj = $scope.fbRoot.$child(IDs[0]);
-  })*/
-
-  $scope.names = [{name: "Milk"},
+        turns:0,
+        xIsAvailable:false,
+        gameIsNotFull:false,
+        names : [{name: "Milk"},
   {name: "April Carrion"},
   {name: "Vi Vacious"},
   {name: "Adore Delano"},
@@ -45,14 +32,26 @@ app.controller ('BoardCtrl', function($scope,$timeout,$firebase) {
   {name: "Trinity K. Bonet"},
   {name: "Kelly Mantle"},
   {name: "Ben DeLaCreme"}
-  ];
+  ]
+      });
+      $scope.fbRoot.$on("change",function(){
+        IDs = $scope.fbRoot.$getIndex();
+        $scope.obj = $scope.fbRoot.$child(IDs[0]);
+      
+      });
+    }
+    else{
+      $scope.obj = $scope.fbRoot.$child(IDs[0]);
+    }
+  });
+
+
+  
 
 
   //$scope.players = [{charselection:0},{charselection:-100}];
   $scope.pageToggle = 0;
   $scope.start = function(){
-    for(var i = 0; i < 2; i++){
-    }
     $scope.pageToggle++;
   };
 
@@ -77,14 +76,32 @@ app.controller ('BoardCtrl', function($scope,$timeout,$firebase) {
   };
   //$scope.newGame();  // initialize the variables inside of the newGame function we just created
   $scope.playMove = function(c,r){
-    var weJustClickedOn = $scope.obj.board[c][r];
+    if(cellIsEmpty(c,r) && itIsMyTurn()){
+
     var p = $scope.obj.playerOnesTurn;
-    if(weJustClickedOn == '') {
+
       var piece = p ? 'x' : 'o';
       $scope.obj.board[c][r] = piece;
       $scope.obj.turns++;
+      $scope.obj.$save();
       endTurn(c,r,piece);
-    }
+
+  }
+  var itIsMyTurn = function(){
+    return itIsMySymbolsTurn() || (currentSymbolUnused() && iDontHaveASymbol());
+  }
+  var itIsMySymbolsTurn = function(){  // what is it is my turn defined as???
+
+  }
+  var currentSymbolUnused = function(){
+
+  }
+  var iDontHaveASymbol = function(){
+    return !mySymbol;
+  }
+  var cellIsEmpty = function(c,r){
+    return $scope.obj.board[c][r] == '';
+  }
   };
 
   function endTurn(c,r,p){
@@ -97,12 +114,16 @@ app.controller ('BoardCtrl', function($scope,$timeout,$firebase) {
     }
     if(horWin || vertWin || diag1Win || diag2Win) endGame(p + ' winned!');
     else if(catsGame) endGame('cats game :(');
-    else $scope.obj.playerOnesTurn = !$scope.obj.playerOnesTurn; //new turn
+    else {
+      $scope.obj.playerOnesTurn = !$scope.obj.playerOnesTurn;
+      $scope.obj.$save();
+    } //new turn
   };
   function endGame (msg){
     $timeout(function(){alert(msg);
     $scope.newGame();},500);
   }
+
 
 });
 /****END GAME LOGIC****/
@@ -120,29 +141,36 @@ app.directive('characters',function(){
     templateUrl:"characters.html",
     scope:{
       xoffset:"="
+
     },
     link:function(scope){
-      
-      scope.charname = scope.$parent.names[Math.abs(scope.xoffset/100)].name;
+      console.log(scope.xoffset);
+      scope.charname = scope.$parent.$parent.obj.names[Math.abs(scope.xoffset/-100)].name;
       scope.carouseloff = {backgroundPosition:scope.xoffset+"px 0px"};
+      scope.$watch(scope.carouseloff.backgroundPosition,function(n){
+        alert('firing');
+        scope.carouseloff = n;
+        scope.$parent.$parent.obj.$save();
+      });
       scope.goLeft = function(){
+
         scope.xoffset -= 1300;
         scope.xoffset %= 1400;
+        console.log("LEFT "+scope.xoffset)
         scope.carouseloff ={backgroundPosition:scope.xoffset + "px 0px"};
-        scope.charname = scope.$parent.names[Math.abs(scope.xoffset/100)].name;
-        scope.$parent.obj.$save();
+        scope.charname = scope.$parent.$parent.obj.names[Math.abs(scope.xoffset/-100)].name;
+        console.log("LEFT " +scope.$parent.$parent.obj);
+        scope.$parent.$parent.obj.$save();
       }
       scope.goRight = function(){
-
-
-
         scope.xoffset -= 100;
         scope.xoffset %= 1400;
+        console.log("right "+scope.xoffset)
         scope.carouseloff ={backgroundPosition:scope.xoffset + "px 0px"};
-        scope.charname = scope.$parent.names[Math.abs(scope.xoffset/100)].name;
-        scope.$parent.obj.$save();
+        scope.charname = scope.$parent.$parent.obj.names[Math.abs(scope.xoffset/-100)].name;
+        console.log('right '+scope.$parent.$parent.obj);
+        scope.$parent.$parent.obj.$save();
       }
-     
     }
   }
 }

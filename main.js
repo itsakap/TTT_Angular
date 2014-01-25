@@ -13,26 +13,26 @@ app.controller ('BoardCtrl', function($scope,$timeout,$firebase) {
       $scope.fbRoot.$add({
         board:[['','',''],['','',''],['','','']],
         playerOnesTurn:true,
-        playerone:{charselection:0},
-        playertwo:{charselection:-100},
+        playerone:{charselection:0, nameIndex:0},
+        playertwo:{charselection:-100,nameIndex:1},
         turns:0,
         xIsAvailable:false,
         gameIsNotFull:false,
         names : [{name: "Milk"},
-  {name: "April Carrion"},
-  {name: "Vi Vacious"},
-  {name: "Adore Delano"},
-  {name: "Joslyn Fox"},
-  {name: "Bianca del Rio"},
-  {name: "Courtney Act"},
-  {name: "Miss Darienne Lake"},
-  {name: "Laganja Estranja"},
-  {name: "Gia Gunn"},
-  {name: "Magnolia Crawford"},
-  {name: "Trinity K. Bonet"},
-  {name: "Kelly Mantle"},
-  {name: "Ben DeLaCreme"}
-  ]
+                 {name: "April Carrion"},
+                 {name: "Vi Vacious"},
+                 {name: "Adore Delano"},
+                 {name: "Joslyn Fox"},
+                 {name: "Bianca del Rio"},
+                 {name: "Courtney Act"},
+                 {name: "Miss Darienne Lake"},
+                 {name: "Laganja Estranja"},
+                 {name: "Gia Gunn"},
+                 {name: "Magnolia Crawford"},
+                 {name: "Trinity K. Bonet"},
+                 {name: "Kelly Mantle"},
+                 {name: "Ben DeLaCreme"}
+                ]
       });
       $scope.fbRoot.$on("change",function(){
         IDs = $scope.fbRoot.$getIndex();
@@ -55,7 +55,6 @@ app.controller ('BoardCtrl', function($scope,$timeout,$firebase) {
     $scope.pageToggle++;
   };
 
-  //consider getting other player's charselection
   $scope.getStyle = function(c){
     if(c=='x'){
       return {backgroundPosition: $scope.obj.playerone.charselection+"px 0px"}
@@ -139,15 +138,38 @@ app.directive('characters',function(){
   return{
     restrict:"E",
     templateUrl:"characters.html",
+    scope:{player:"=",charname:"@"/*xoffset:"=",charnameindex:"="*/},
+    link:function(s,e,a){
+      console.log(s.xoffset,e,a.xoffset);
+      s.$watch('player.charselection',function(n){
+        s.fuck = {backgroundPosition: n +"px 0px"};
+      })
+      s.goLeft = function(){
+        console.log("before: "+s.player.charselection +" "+ s.player.nameIndex);
+        s.player.charselection-=1300; s.player.charselection %=1400;
+        s.player.nameIndex+=13; s.player.nameIndex%=14;
+
+        
+        s.$parent.$parent.obj.$save();
+      };
+      s.goRight = function(){
+        
+      };
+            s.$watch(s.player.charselection,function(n){
+        
+      })
+    }
+/*    restrict:"E",
+    templateUrl:"characters.html",
     scope:{
       xoffset:"="
 
     },
     link:function(scope){
-      console.log(scope.xoffset);
+      console.log(scope.$parent.$parent.obj.playerone.charselection);
       scope.charname = scope.$parent.$parent.obj.names[Math.abs(scope.xoffset/-100)].name;
       scope.carouseloff = {backgroundPosition:scope.xoffset+"px 0px"};
-      scope.$watch(scope.carouseloff.backgroundPosition,function(n){
+      scope.$watch(scope.carouseloff.backgroundPosition,function(n,o){
         alert('firing');
         scope.carouseloff = n;
         scope.$parent.$parent.obj.$save();
@@ -171,7 +193,7 @@ app.directive('characters',function(){
         console.log('right '+scope.$parent.$parent.obj);
         scope.$parent.$parent.obj.$save();
       }
-    }
+    }*/
   }
 }
 )

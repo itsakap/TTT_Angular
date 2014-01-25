@@ -14,8 +14,8 @@
       <div x-ng-switch on="pageToggle">
         <intro x-ng-switch-when="0"></intro>
         <div x-ng-switch-when = "1">
-          <characters xoffset = "obj.playerone.charselection"></characters>
-          <characters xoffset = "obj.playertwo.charselection"></characters> 
+          <characters charname = "{{obj.names[obj.playerone.nameIndex].name}}" player = "obj.playerone"></characters>
+          <characters charname = "{{obj.names[obj.playertwo.nameIndex].name}}"player = "obj.playertwo"></characters> 
           <button x-ng-click = "start()">Get into it, hunty</button>
         </div>
         <board x-ng-switch-when="2"></board>

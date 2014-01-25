@@ -140,6 +140,7 @@ app.directive('characters',function(){
         scope.xoffset %= 1400;
         scope.carouseloff ={backgroundPosition:scope.xoffset + "px 0px"};
         scope.charname = scope.$parent.names[Math.abs(scope.xoffset/100)].name;
+        scope.$parent.obj.$save();
       }
      
     }

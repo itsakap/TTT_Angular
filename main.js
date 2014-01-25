@@ -71,11 +71,11 @@ app.controller ('BoardCtrl', function($scope,$timeout,$firebase) {
 
 
   $scope.newGame = function(){
-    console.log($scope.obj);
-/*    $scope.obj.turns = 0; $scope.obj.playerOnesTurn=true;
-    $scope.obj.board = [['','',''],['','',''],['','','']]*/;
+    
+    $scope.obj.turns = 0; $scope.obj.playerOnesTurn=true;
+    $scope.obj.board = [['','',''],['','',''],['','','']];
   };
-  $scope.newGame();  // initialize the variables inside of the newGame function we just created
+  //$scope.newGame();  // initialize the variables inside of the newGame function we just created
   $scope.playMove = function(c,r){
     var weJustClickedOn = $scope.obj.board[c][r];
     var p = $scope.obj.playerOnesTurn;
@@ -124,14 +124,13 @@ app.directive('characters',function(){
     link:function(scope){
       
       scope.charname = scope.$parent.names[Math.abs(scope.xoffset/100)].name;
-      console.log('how about here?');
       scope.carouseloff = {backgroundPosition:scope.xoffset+"px 0px"};
       scope.goLeft = function(){
         scope.xoffset -= 1300;
         scope.xoffset %= 1400;
         scope.carouseloff ={backgroundPosition:scope.xoffset + "px 0px"};
         scope.charname = scope.$parent.names[Math.abs(scope.xoffset/100)].name;
-
+        scope.$parent.obj.$save();
       }
       scope.goRight = function(){
 

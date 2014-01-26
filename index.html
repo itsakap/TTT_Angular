@@ -11,9 +11,14 @@
     <div ng-app="TTT" ng-controller = "BoardCtrl" id = "board">
       <div x-ng-switch on="pageToggle">
         <intro x-ng-switch-when="0"></intro>
-        <div x-ng-switch-when = "1">
-          <characters charname = "{{obj.names[obj.playerone.nameIndex].name}}" player = "obj.playerone"></characters>
-          <characters charname = "{{obj.names[obj.playertwo.nameIndex].name}}"player = "obj.playertwo"></characters> 
+        <div id = "characters-page" x-ng-switch-when = "1">
+          <div class = "clearfix">
+            <characters charname = "{{obj.names[obj.playerone.nameIndex].name}}" player = "obj.playerone"></characters>
+          
+            <h2>VS</h2>
+          
+            <characters charname = "{{obj.names[obj.playertwo.nameIndex].name}}"player = "obj.playertwo"></characters>
+          </div>
           <button x-ng-click = "start()">Get into it, hunty</button>
         </div>
         <board x-ng-switch-when="2"></board>

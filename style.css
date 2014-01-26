@@ -4,7 +4,14 @@
      -webkit-box-sizing: border-box; /* Safari/Chrome/iOS/Android */
      box-sizing: border-box; /* IE */
 }
-
+.clearfix:after {
+  content: ".";
+  display: block;
+  clear: both;
+  visibility: hidden;
+  line-height: 0;
+  height: 0;
+}
 body{
   margin:0;
   text-align: center;
@@ -45,14 +52,30 @@ li{
   background:url(img/season-6-contestants-onerow-small.jpg) no-repeat;
 
 }
+#characters-page{
+  margin: 6em auto;
+  height:600px;
+  width:600px;
+  text-align: center;
+
+}
+#characters-page > button{
+  width: 200px;
+  margin: 0 auto;
+}
+#characters-page h2{
+  float:left;
+  width:100px;
+  display:inline-block;
+}
 /*begin sprite carousel*/
-.haha{
+.carousel-nest{
   width:250px;
   height:200px;
-  margin:0 auto;
+  float:left;
   position:relative;
 }
-.haha p {
+.carousel-nest p {
   position:absolute;
   bottom:0;
   width:100%;

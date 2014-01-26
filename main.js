@@ -16,8 +16,8 @@ app.controller ('BoardCtrl', function($scope,$timeout,$firebase) {
       $scope.fbRoot.$add({
         board:[['','',''],['','',''],['','','']],
         playerOnesTurn:true,
-        playerone:{charselection:0, nameIndex:0},
-        playertwo:{charselection:-100,nameIndex:1},
+        playerone:{charselection:0, nameIndex:0,piece:'x'},
+        playertwo:{charselection:-100,nameIndex:1,piece:'o'},
         turns:0,
         xIsAvailable:true,
         oIsAvailable:true,
@@ -53,6 +53,7 @@ app.controller ('BoardCtrl', function($scope,$timeout,$firebase) {
 
   $scope.pageToggle = 0;
   $scope.start = function(){
+    //"bind" this window to a player
     if(($scope.obj.xIsAvailable || $scope.obj.oIsAvailable) && $scope.pageToggle ==0){
       if($scope.obj.xIsAvailable){
         $scope.obj.xIsAvailable = false;
@@ -68,26 +69,31 @@ app.controller ('BoardCtrl', function($scope,$timeout,$firebase) {
   };
 
   $scope.getStyle = function(c){
-    if($scope.obj.playerone != undefined || $scope.obj.playertwo != undefined) {
+    //verify that we have added this player's scope to the turn.
     if(c=='x' && $scope.obj.playerone != undefined){
       return {backgroundPosition:$scope.obj.playerone.charselection+"px 0px"};
     }
     if(c=='o' && $scope.obj.playertwo != undefined){
       return {backgroundPosition:$scope.obj.playertwo.charselection+"px 0px"};
     }
-  }
     //style is not returned if empty cell
   }
 
-//**** <GAME LOGIC> ****//
+
+
+  /*******************************/
+ /*         <GAME LOGIC>        */
+/*******************************/
 
 
   $scope.newGame = function(){
+    
     $scope.obj.turns = 0; $scope.obj.playerOnesTurn=true;
     $scope.obj.board = [['','',''],['','',''],['','','']];
     $scope.obj.$save();
+
   };
-  //$scope.newGame();  // initialize the variables inside of the newGame function we just created
+
   $scope.playMove = function(c,r){
     var p = $scope.obj.playerOnesTurn;
     var piece = p ? 'x' : 'o';
@@ -99,25 +105,8 @@ app.controller ('BoardCtrl', function($scope,$timeout,$firebase) {
       $scope.obj.$save();
       endTurn(c,r,piece);
   }
-//<i might not use some of these...>
-  var itIsMyTurn = function(){
-    return itIsMySymbolsTurn() || (currentSymbolUnused() && iDontHaveASymbol());
-  }
-  var itIsMySymbolsTurn = function(){  // what is it is my turn defined as???
 
-  }
-  var currentSymbolUnused = function(){
-
-  }
-  var iDontHaveASymbol = function(){
-    return !mySymbol;
-  }
-  var cellIsEmpty = function(c,r){
-    return $scope.obj.board[c][r] == '';
-  }
   };
-
-//</i might not use some of these...>
 
   function endTurn(c,r,p){
     var horWin = true, vertWin = true, diag1Win = true, diag2Win = true, bd = $scope.obj.board, catsGame = ($scope.obj.turns==9);
@@ -143,8 +132,13 @@ app.controller ('BoardCtrl', function($scope,$timeout,$firebase) {
   }
 
 
+  /*******************************/
+ /*         </GAME LOGIC>       */
+/*******************************/
 });
-/****</GAME LOGIC>****/
+
+
+
 
 
 app.directive('intro',function(){
@@ -159,28 +153,33 @@ app.directive('characters',function(){
     templateUrl:"characters.html",
     scope:{player:"=",charname:"@"},
     link:function(s){
+
+      //we can initialize the style of the opposite carousel to be a little opaque!
+
       //$watch function for background position of spritesheets
       s.$watch('player.charselection',function(n){
         s.carouselstyle = {backgroundPosition: n +"px 0px"};
       })
       //<carousel slider buttons>
       s.slide = function(direction){
-        //new background position for sprite sheet
-        var newPosition = (direction=='left') ? 1300 : 100;
-        //new index in name array
-        var newIndex = newPosition / 100;
-        //traverse the sprite and possibly wrap around it.
-        s.player.charselection -= newPosition; s.player.charselection %= 1400;
-        //traverse and possibly wrap around name array
-        s.player.nameIndex += newIndex; s.player.nameIndex %=14;
-        //send data to cloud
-        s.$parent.$parent.obj.$save();
+        if(s.player.piece == s.$parent.myPiece){
+          //new background position for sprite sheet
+          var newPosition = (direction=='left') ? 1300 : 100;
+          //new index in name array
+          var newIndex = newPosition / 100;
+          //traverse the sprite and possibly wrap around it.
+          s.player.charselection -= newPosition; s.player.charselection %= 1400;
+          //traverse and possibly wrap around name array
+          s.player.nameIndex += newIndex; s.player.nameIndex %=14;
+          //send data to cloud
+          s.$parent.$parent.obj.$save();
+        }
+        else alert('YOU MAY NOT PASS');
       };
       //</carousel slider buttons>      
     }
   }
-}
-)
+})
 app.directive('board',function(){
   return {
     restrict:"E",

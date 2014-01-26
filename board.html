@@ -3,7 +3,7 @@
     <span  x-ng-repeat = "column in row track by $index"
     x-ng-class = "{x : column=='x',
                 o : column=='o'}"
-    x-ng-click = "playMove($parent.$index, $index)"x-ng-style = "getStyle(column)">
+    x-ng-click = "click($parent.$index, $index)"x-ng-style = "sty(column)">
     </span>
   </li>
 </ul>

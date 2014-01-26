@@ -1,6 +1,9 @@
 var app = angular.module('TTT',["firebase"]);
   
 app.controller ('BoardCtrl', function($scope,$timeout,$firebase) {
+
+/*<FIREBASE LOGIC>*/
+
   var ref = new Firebase("https://tictactohnoshebettadont.firebaseio.com/");//this is my fb
   $scope.fbRoot = $firebase(ref);
 
@@ -16,8 +19,8 @@ app.controller ('BoardCtrl', function($scope,$timeout,$firebase) {
         playerone:{charselection:0, nameIndex:0},
         playertwo:{charselection:-100,nameIndex:1},
         turns:0,
-        xIsAvailable:false,
-        gameIsNotFull:false,
+        xIsAvailable:true,
+        oIsAvailable:true,
         names : [{name: "Milk"},
                  {name: "April Carrion"},
                  {name: "Vi Vacious"},
@@ -45,47 +48,58 @@ app.controller ('BoardCtrl', function($scope,$timeout,$firebase) {
     }
   });
 
+/*</FIREBASE LOGIC>*/
 
-  
 
-
-  //$scope.players = [{charselection:0},{charselection:-100}];
   $scope.pageToggle = 0;
   $scope.start = function(){
-    $scope.pageToggle++;
+    if(($scope.obj.xIsAvailable || $scope.obj.oIsAvailable) && $scope.pageToggle ==0){
+      if($scope.obj.xIsAvailable){
+        $scope.obj.xIsAvailable = false;
+        $scope.myPiece = 'x';
+      }
+      else{
+        $scope.obj.oIsAvailable  = false;
+        $scope.myPiece = 'o';
+      }
+    $scope.obj.$save();
+  }
+  $scope.pageToggle++;
   };
 
   $scope.getStyle = function(c){
-    if(c=='x'){
-      return {backgroundPosition: $scope.obj.playerone.charselection+"px 0px"}
+    if($scope.obj.playerone != undefined || $scope.obj.playertwo != undefined) {
+    if(c=='x' && $scope.obj.playerone != undefined){
+      return {backgroundPosition:$scope.obj.playerone.charselection+"px 0px"};
     }
-    if(c=='o'){
-      return {backgroundPosition:$scope.obj.playertwo.charselection+"px 0px"}
+    if(c=='o' && $scope.obj.playertwo != undefined){
+      return {backgroundPosition:$scope.obj.playertwo.charselection+"px 0px"};
     }
   }
+    //style is not returned if empty cell
+  }
 
-
-  //**** BEGIN GAME LOGIC ****//
+//**** <GAME LOGIC> ****//
 
 
   $scope.newGame = function(){
-    
     $scope.obj.turns = 0; $scope.obj.playerOnesTurn=true;
     $scope.obj.board = [['','',''],['','',''],['','','']];
+    $scope.obj.$save();
   };
   //$scope.newGame();  // initialize the variables inside of the newGame function we just created
   $scope.playMove = function(c,r){
-    if(cellIsEmpty(c,r) && itIsMyTurn()){
-
     var p = $scope.obj.playerOnesTurn;
+    var piece = p ? 'x' : 'o';
 
-      var piece = p ? 'x' : 'o';
+    //if cell is empty and the piece I got equals piece predicated on player turn...
+    if(($scope.obj.board[c][r]=='') && ($scope.myPiece == piece)){
       $scope.obj.board[c][r] = piece;
       $scope.obj.turns++;
       $scope.obj.$save();
       endTurn(c,r,piece);
-
   }
+//<i might not use some of these...>
   var itIsMyTurn = function(){
     return itIsMySymbolsTurn() || (currentSymbolUnused() && iDontHaveASymbol());
   }
@@ -103,6 +117,8 @@ app.controller ('BoardCtrl', function($scope,$timeout,$firebase) {
   }
   };
 
+//</i might not use some of these...>
+
   function endTurn(c,r,p){
     var horWin = true, vertWin = true, diag1Win = true, diag2Win = true, bd = $scope.obj.board, catsGame = ($scope.obj.turns==9);
     for (var i = 0; i < 3; i++){
@@ -119,13 +135,16 @@ app.controller ('BoardCtrl', function($scope,$timeout,$firebase) {
     } //new turn
   };
   function endGame (msg){
-    $timeout(function(){alert(msg);
-    $scope.newGame();},500);
+    //a slight delay which might not be necessary if we move that new game function
+    $timeout(function(){
+      alert(msg);
+      $scope.newGame();
+    },500);
   }
 
 
 });
-/****END GAME LOGIC****/
+/****</GAME LOGIC>****/
 
 
 app.directive('intro',function(){
@@ -138,70 +157,41 @@ app.directive('characters',function(){
   return{
     restrict:"E",
     templateUrl:"characters.html",
-    scope:{player:"=",charname:"@"/*xoffset:"=",charnameindex:"="*/},
-    link:function(s,e,a){
-      console.log(s.xoffset,e,a.xoffset);
+    scope:{player:"=",charname:"@"},
+    link:function(s){
+      //$watch function for background position of spritesheets
       s.$watch('player.charselection',function(n){
-        s.fuck = {backgroundPosition: n +"px 0px"};
+        s.carouselstyle = {backgroundPosition: n +"px 0px"};
       })
-      s.goLeft = function(){
-        console.log("before: "+s.player.charselection +" "+ s.player.nameIndex);
-        s.player.charselection-=1300; s.player.charselection %=1400;
-        s.player.nameIndex+=13; s.player.nameIndex%=14;
-
-        
+      //<carousel slider buttons>
+      s.slide = function(direction){
+        //new background position for sprite sheet
+        var newPosition = (direction=='left') ? 1300 : 100;
+        //new index in name array
+        var newIndex = newPosition / 100;
+        //traverse the sprite and possibly wrap around it.
+        s.player.charselection -= newPosition; s.player.charselection %= 1400;
+        //traverse and possibly wrap around name array
+        s.player.nameIndex += newIndex; s.player.nameIndex %=14;
+        //send data to cloud
         s.$parent.$parent.obj.$save();
       };
-      s.goRight = function(){
-        
-      };
-            s.$watch(s.player.charselection,function(n){
-        
-      })
+      //</carousel slider buttons>      
     }
-/*    restrict:"E",
-    templateUrl:"characters.html",
-    scope:{
-      xoffset:"="
-
-    },
-    link:function(scope){
-      console.log(scope.$parent.$parent.obj.playerone.charselection);
-      scope.charname = scope.$parent.$parent.obj.names[Math.abs(scope.xoffset/-100)].name;
-      scope.carouseloff = {backgroundPosition:scope.xoffset+"px 0px"};
-      scope.$watch(scope.carouseloff.backgroundPosition,function(n,o){
-        alert('firing');
-        scope.carouseloff = n;
-        scope.$parent.$parent.obj.$save();
-      });
-      scope.goLeft = function(){
-
-        scope.xoffset -= 1300;
-        scope.xoffset %= 1400;
-        console.log("LEFT "+scope.xoffset)
-        scope.carouseloff ={backgroundPosition:scope.xoffset + "px 0px"};
-        scope.charname = scope.$parent.$parent.obj.names[Math.abs(scope.xoffset/-100)].name;
-        console.log("LEFT " +scope.$parent.$parent.obj);
-        scope.$parent.$parent.obj.$save();
-      }
-      scope.goRight = function(){
-        scope.xoffset -= 100;
-        scope.xoffset %= 1400;
-        console.log("right "+scope.xoffset)
-        scope.carouseloff ={backgroundPosition:scope.xoffset + "px 0px"};
-        scope.charname = scope.$parent.$parent.obj.names[Math.abs(scope.xoffset/-100)].name;
-        console.log('right '+scope.$parent.$parent.obj);
-        scope.$parent.$parent.obj.$save();
-      }
-    }*/
   }
 }
 )
 app.directive('board',function(){
   return {
     restrict:"E",
-    templateUrl: "board.html"
-
+    templateUrl: "board.html",
+    link:function(s){
+      s.click = function(c,r){
+        s.$parent.playMove(c,r);
+      }
+      s.sty = function(c){
+        return s.$parent.getStyle(c);
+      }
+    }
   }
-
 })

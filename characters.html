@@ -1,10 +1,9 @@
+<div class = "carousel-nest"
+     x-ng-class = '{inactive: $parent.myPiece.val != player.piece}'>
 
-
-
-<div class = "carousel-nest">
-  <button class = "togLeft" x-ng-click = "slide('left')"><</button>
+  <img src = "img/stilettoL.png" x-ng-click = "slide('left')"/>
   <div class = "carousel" x-ng-style = "carouselstyle"></div>
-  <button class = "togRight" x-ng-click = "slide('right')"  >></button>
+  <img src = "img/stiletto.png" x-ng-click = "slide('right')"/>
   <p>{{charname}}</p>
 
 </div>

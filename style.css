@@ -12,6 +12,9 @@
   line-height: 0;
   height: 0;
 }
+.inactive{
+  opacity:.6;
+}
 body{
   margin:0;
   text-align: center;
@@ -54,15 +57,17 @@ li{
 }
 #characters-page{
   margin: 6em auto;
-  height:600px;
-  width:600px;
+  width:750px;
   text-align: center;
 
 }
+
+/*Get into it, Hunty*/
 #characters-page > button{
   width: 200px;
   margin: 0 auto;
 }
+
 #characters-page h2{
   float:left;
   width:100px;
@@ -70,14 +75,18 @@ li{
 }
 /*begin sprite carousel*/
 .carousel-nest{
-  width:250px;
-  height:200px;
-  float:left;
+  text-align: center;
+  width:325px;
+  height:150px;
   position:relative;
+  float:left;
+}
+.carousel-nest img{
+  width:100px;
+  display: inline-block;
 }
 .carousel-nest p {
-  position:absolute;
-  bottom:0;
+
   width:100%;
 }
 .togLeft,.togRight{
@@ -87,12 +96,16 @@ li{
   top:-50px;
 
 }
+button{
+  background: magenta;
+  border:3px solid black;
+}
 .carousel{
   width:100px;
   height:100px;
   display:inline-block;
   background:url(img/season-6-contestants-onerow-small.jpg) no-repeat;
-
+  border:1px solid black;
 
 }
 /*end sprite carousel*/

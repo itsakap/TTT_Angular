@@ -13,11 +13,11 @@
         <intro x-ng-switch-when="0"></intro>
         <div id = "characters-page" x-ng-switch-when = "1">
           <div class = "clearfix">
-            <characters charname = "{{obj.names[obj.playerone.nameIndex].name}}" player = "obj.playerone"></characters>
+            <characters charname = "{{names[obj.playerone.nameIndex]}}" player = "obj.playerone"></characters>
           
             <h2>VS</h2>
           
-            <characters charname = "{{obj.names[obj.playertwo.nameIndex].name}}"player = "obj.playertwo"></characters>
+            <characters charname = "{{names[obj.playertwo.nameIndex]}}"player = "obj.playertwo"></characters>
           </div>
           <button x-ng-click = "start()">Get into it, hunty</button>
         </div>

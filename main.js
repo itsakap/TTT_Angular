@@ -113,6 +113,10 @@ app.controller ('BoardCtrl', function($scope,$timeout,$firebase,$window) {
       $scope.pageToggle++;
     }
   },4000);
+    $scope.$watchCollection('[obj.playerone.ready,obj.playertwo.ready]',function(n){
+      if(n[0] && n[1])
+        $scope.pageToggle = 2;
+    });
   }
 //
 /*< ! HELPERS>*/
@@ -192,6 +196,7 @@ app.directive('characters',function(){
       s.$watch('player.charselection',function(n){
         s.carouselstyle = {backgroundPosition: n +"px 0px"};
       })
+
       //<carousel slider buttons>
       s.slide = function(direction){
         if(s.player.piece == s.$parent.myPiece.val){

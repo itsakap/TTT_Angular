@@ -4,6 +4,11 @@
      -webkit-box-sizing: border-box; /* Safari/Chrome/iOS/Android */
      box-sizing: border-box; /* IE */
 }
+/*h1s on title page*/
+
+h1:first-child{font-family:'Sonsie One', cursive; margin:2em 0;}
+h1:nth-child(2){font-family:'Codystar', cursive; font-size:3em; margin:1em 0;}
+
 .clearfix:after {
   content: ".";
   display: block;
@@ -14,6 +19,21 @@
 }
 .inactive{
   opacity:.6;
+}
+#rdrlogo{
+  width:500px;
+  height:218px;
+  margin: 0 auto;
+  background: url("img/RDR-sprite.png");
+  
+}
+
+.animating{
+  -webkit-animation:flash 0.1s steps(2) infinite;
+}
+@-webkit-keyframes flash{
+  from{background-position:0px;}
+  to{ background-position:-1000px;}
 }
 body{
   margin:0;
@@ -63,15 +83,14 @@ li{
 }
 
 /*Get into it, Hunty*/
-#characters-page > button{
-  width: 200px;
-  margin: 0 auto;
-}
+
 
 #characters-page h2{
   float:left;
+  color:#f33;
   width:100px;
   display:inline-block;
+  font-family:"Titan One";
 }
 /*begin sprite carousel*/
 .carousel-nest{
@@ -86,8 +105,11 @@ li{
   display: inline-block;
 }
 .carousel-nest p {
-
+  font-family:"Righteous", cursive;
   width:100%;
+  color:#EC1493;
+  text-shadow: 0.1em 0.1em #333;
+  font-size:1.5em;
 }
 .togLeft,.togRight{
   height:100px;
@@ -97,9 +119,23 @@ li{
 
 }
 button{
-  background: magenta;
-  border:3px solid black;
+  background: hotpink;
+  width:300px;
+  height:150px;
+  border:5px solid turquoise;
+  font-size:2em;
+  font-family:'Monoton';
+  color:turquoise;
+  margin:1em 2em 2em;
 }
+.ready{
+  width:100px;
+  height:50px;
+
+}
+
+/*.ready:active{}*/
+
 .carousel{
   width:100px;
   height:100px;

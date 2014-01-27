@@ -1,20 +1,14 @@
-var app = angular.module('TTT',["firebase"]);
-  
-app.controller ('BoardCtrl', function($scope,$timeout,$firebase) {
+var app = angular.module("TTT",[
+  "firebase"]);
+app.controller ('BoardCtrl', function($scope,$timeout,$firebase,$window) {
 
 
 /*<FIREBASE LOGIC (creates the multiplayer "cloud")>*/
 
   var ref = new Firebase("https://tictactohnoshebettadont.firebaseio.com/");//this is my fb
   $scope.fbRoot = $firebase(ref);
-
-  //wait until everything really is loaded
-  $scope.fbRoot.$on("loaded",function(){
-    IDs = $scope.fbRoot.$getIndex();
-
-    if(IDs.length == 0){  
-      //no board --> let's build one!
-      $scope.fbRoot.$add({
+  var initGame = function(n){
+    $scope.fbRoot.$add({
 
         //the board's state and turns, shared by all users
         board:[['','',''],['','',''],['','','']],
@@ -22,8 +16,8 @@ app.controller ('BoardCtrl', function($scope,$timeout,$firebase) {
         turns:0,
         //player objects are in the cloud for access in directives, and so
         //that players can VIEW each others' properties
-        playerone:{charselection:0, nameIndex:0,piece:'x'},
-        playertwo:{charselection:-100,nameIndex:1,piece:'o'},
+        playerone:{charselection:0, nameIndex:0,piece:'x', ready:false},
+        playertwo:{charselection:-100,nameIndex:1,piece:'o',ready:false},
         
         //helpers to sync and assign player
         xIsAvailable:true,
@@ -32,14 +26,29 @@ app.controller ('BoardCtrl', function($scope,$timeout,$firebase) {
       });
       $scope.fbRoot.$on("change",function(){
         IDs = $scope.fbRoot.$getIndex();
-        $scope.obj = $scope.fbRoot.$child(IDs[0]);
-      
+        $scope.obj = $scope.fbRoot.$child(IDs[n]);
       });
+  };
+  //wait until everything really is loaded
+  $scope.fbRoot.$on("loaded",function(value){
+    IDs = $scope.fbRoot.$getIndex();
+
+    if(IDs.length == 0){  
+      //no board --> let's build one!
+      initGame(0);
     }
-    else{
-      $scope.obj = $scope.fbRoot.$child(IDs[0]);
-    }
-  });
+    else{ // at least one game exists
+      var last = IDs.length;
+      var toBreak = false;
+      var gameToJoin = last;
+      $scope.obj = $scope.fbRoot.$child(IDs[last-1]);
+      $timeout(function(){
+        if(!$scope.obj.oIsAvailable){
+          initGame(last);
+        }
+      },1);
+    }});
+
 //The created Firebase object ($scope.obj)
 //could contain more objects as values, if the
 //application is complex enough.
@@ -65,26 +74,31 @@ app.controller ('BoardCtrl', function($scope,$timeout,$firebase) {
                  "Kelly Mantle",
                  "Ben DeLaCreme"
                 ];
+  $scope.getPiece =function(){
+      $timeout(function(){
+        if($scope.obj.xIsAvailable){
+          $scope.obj.xIsAvailable = false;
+          $scope.myPiece = {val:'x'};
+        }
+        else if ($scope.obj.oIsAvailable){
+          $scope.obj.oIsAvailable  = false;
+          $scope.myPiece = {val:'o'};
+        }
+        $scope.obj.$save();
+        console.log($scope.obj.xIsAvailable);
+        console.log($scope.obj.oIsAvailable);
+      },300);
+   
+   };
   $scope.start = function(){
     //"bind" this window to a player
-    if(($scope.obj.xIsAvailable || $scope.obj.oIsAvailable) && $scope.pageToggle ==0){
-      if($scope.obj.xIsAvailable){
-        $scope.obj.xIsAvailable = false;
-        $scope.myPiece = {val:'x'};
-      }
-      else{
-        $scope.obj.oIsAvailable  = false;
-        $scope.myPiece = {val:'o'};
-      }
+    if($scope.pageToggle ==0){
       $scope.pageToggle++;
-    $scope.obj.$save();
     }
-  
     else {
-      //show some sort of message like, A game is currently in progress;
+      //shouldn't happen
       $scope.pageToggle = 2;
     }
-  
   };
 
   $scope.getStyle = function(c){
@@ -97,6 +111,11 @@ app.controller ('BoardCtrl', function($scope,$timeout,$firebase) {
     }
     //style is not returned if empty cell
   }
+  $scope.$watchCollection('[obj.playerone.ready,obj.playertwo.ready]',function(n){
+    if(n[0] && n[1]){
+      console.log('lets get to werk!!!');
+    }
+  });
 //
 /*< ! HELPERS>*/
 
@@ -189,8 +208,14 @@ app.directive('characters',function(){
           //send data to cloud
           s.$parent.$parent.obj.$save();
         }
-
       };
+      s.werk = function(){
+        if(s.player.piece == s.$parent.myPiece.val && !s.player.ready){
+          s.player.ready = true;
+          s.$parent.$parent.obj.$save();
+          //SOUND EFFECT
+        }
+      }
       //</carousel slider buttons>      
     }
   }

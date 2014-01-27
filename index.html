@@ -1,16 +1,19 @@
 <html>
   <head>
+    <title>Tic Tac T</title>
+    <link href='http://fonts.googleapis.com/css?family=Codystar|Righteous|Sonsie+One|Monoton|Titan+One' rel='stylesheet' type='text/css'/>
     <link rel = "stylesheet" type = "text/css" href = "style.css"/>
     <script src = "angular.min.js"></script>
     <script src = "https://cdn.firebase.com/v0/firebase.js"></script>
     <script src = "https://cdn.firebase.com/libs/angularfire/0.6.0/angularfire.min.js"></script>
     <script src = "main.js"></script>
+
   </head>
   <body>
-    <img src = "img/RDR.png"/>
-    <div ng-app="TTT" ng-controller = "BoardCtrl" id = "board">
+    <div x-ng-app="TTT" x-ng-controller = "BoardCtrl" id = "board">
+    <div id = "rdrlogo" x-ng-class="{animating:pageToggle == 0}"></div>
       <div x-ng-switch on="pageToggle">
-        <intro x-ng-switch-when="0"></intro>
+        <intro x-ng-init = "getPiece()" x-ng-switch-when="0"></intro>
         <div id = "characters-page" x-ng-switch-when = "1">
           <div class = "clearfix">
             <characters charname = "{{names[obj.playerone.nameIndex]}}" player = "obj.playerone"></characters>
@@ -19,10 +22,11 @@
           
             <characters charname = "{{names[obj.playertwo.nameIndex]}}"player = "obj.playertwo"></characters>
           </div>
-          <button x-ng-click = "start()">Get into it, hunty</button>
+          
         </div>
         <board x-ng-switch-when="2"></board>
       </div>
+      <div class = "volume" x-ng-class = "{muted:true}"></div>
     </div>
   </body>
 </html>

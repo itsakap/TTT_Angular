@@ -133,6 +133,7 @@ body{
   top:-50px;
 
 }
+
 button{
   background: hotpink;
   width:300px;
@@ -142,6 +143,10 @@ button{
   font-family:'Monoton';
   color:turquoise;
   margin:1em 2em 2em;
+}
+.carousel-nest button{
+  font-size:1em;
+  color:white;
 }
 .ready{
   width:100px;

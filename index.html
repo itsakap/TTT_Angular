@@ -10,10 +10,10 @@
 
   </head>
   <body>
-    <div x-ng-app="TTT" x-ng-controller = "BoardCtrl" id = "board">
+    <div x-ng-app="TTT" x-ng-controller = "BoardCtrl" id = "board" x-ng-init = "getPiece()">
     <div id = "rdrlogo" x-ng-class="{animating:pageToggle == 0}"></div>
       <div x-ng-switch on="pageToggle">
-        <intro x-ng-init = "getPiece()" x-ng-switch-when="0"></intro>
+        <intro  x-ng-switch-when="0"></intro>
         <div id = "characters-page" x-ng-switch-when = "1">
           <div class = "clearfix">
             <characters charname = "{{names[obj.playerone.nameIndex]}}" player = "obj.playerone"></characters>

@@ -1,40 +1,25 @@
-/*BOX MODEL HACK*/
-* {
+/*STYLE.CSS*/
+
+
+
+/*HELPER SELECTORS*/
+  /*BOX MODEL HACK*/
+  * {
      -moz-box-sizing: border-box; /* Firexfox */
      -webkit-box-sizing: border-box; /* Safari/Chrome/iOS/Android */
      box-sizing: border-box; /* IE */
-}
-/*h1s on title page*/
-
-h1:first-child{font-family:'Sonsie One', cursive; margin:2em 0;}
-h1:nth-child(2){font-family:'Codystar', cursive; font-size:3em; margin:1em 0;}
-
-.clearfix:after {
+  }
+  .clearfix:after {
   content: ".";
   display: block;
   clear: both;
   visibility: hidden;
   line-height: 0;
   height: 0;
-}
-.inactive{
-  opacity:.6;
-}
-#rdrlogo{
-  width:500px;
-  height:218px;
-  margin: 0 auto;
-  background: url("img/RDR-sprite.png");
-  
-}
+  }
+/*END HELPER SELECTORS*/
 
-.animating{
-  -webkit-animation:flash 0.1s steps(2) infinite;
-}
-@-webkit-keyframes flash{
-  from{background-position:0px;}
-  to{ background-position:-1000px;}
-}
+
 body{
   margin:0;
   text-align: center;
@@ -45,44 +30,74 @@ body{
   position:relative;
   margin-bottom: 0;
 }
-span{
-  display:inline-block;
-  width:33.33%;
-  height:100%;
-  border: 2px solid black;
-  margin:0;
-  padding:0;
-}
-ul{
-  list-style: none;
-  margin:0 auto;
-  padding:0;
-  width:300px;
-  height:300px;
-}
-li{
-  margin:0;
-  padding:0;
-  height:33.33%;
-  width:100%;
-}
-.x{
-  background:url(img/season-6-contestants-onerow-small.jpg) no-repeat;
 
 
-}
-.o{
-  background:url(img/season-6-contestants-onerow-small.jpg) no-repeat;
+/*TITLE PAGE*/
 
-}
+
+  /*style both h1's separately*/
+  h1:first-child{font-family:'Sonsie One', cursive; margin:2em 0;}
+  h1:nth-child(2){font-family:'Codystar', cursive; font-size:3em; margin:1em 0;}
+  .inactive{
+  opacity:.6;
+  }
+  #rdrlogo{
+    width:500px;
+    height:218px;
+    margin: 0 auto;
+    background: url("img/RDR-sprite.png"); 
+  }
+  /*animation (flickering logo)*/
+  .animating{
+    -webkit-animation:flash 0.1s steps(2) infinite;
+  }
+  @-webkit-keyframes flash{
+    from{background-position:0px;}
+    to{ background-position:-1000px;}
+  }
+/*END TITLE PAGE*/
+
+
+/*BOARD*/
+  span{
+    display:inline-block;
+    width:33.33%;
+    height:100%;
+    border: 2px solid black;
+    margin:0;
+    padding:0;
+  }
+  ul{
+    list-style: none;
+    margin:0 auto;
+    padding:0;
+    width:300px;
+    height:300px;
+  }
+  li{
+    margin:0;
+    padding:0;
+    height:33.33%;
+    width:100%;
+  }
+  .x{
+    background:url(img/season-6-contestants-onerow-small.jpg) no-repeat;
+    border:1px solid red;
+  }
+  .o{
+    background:url(img/season-6-contestants-onerow-small.jpg) no-repeat;
+    border:1px solid turquoise;
+  }
+
+/*END BOARD*/
+
 #characters-page{
-  margin: 6em auto;
-  width:750px;
-  text-align: center;
+    margin: 6em auto;
+    width:750px;
+    text-align: center;
+  }
 
-}
 
-/*Get into it, Hunty*/
 
 
 #characters-page h2{

@@ -39,24 +39,22 @@ app.controller ('BoardCtrl', function($scope,$timeout,$firebase,$window) {
     }
     else{ // at least one game exists
       var last = IDs.length;
-      var toBreak = false;
-      var gameToJoin = last;
+      $scope.loaded = false;
       $scope.obj = $scope.fbRoot.$child(IDs[last-1]);
       $timeout(function(){
         if(!$scope.obj.oIsAvailable){
           initGame(last);
+          
         }
       },1);
-    }});
+    }
+  });
 
-//The created Firebase object ($scope.obj)
-//could contain more objects as values, if the
-//application is complex enough.
 /*< ! FIREBASE LOGIC>*/
 
 
 
-/*<HELPERS (methods for UX)>*/
+/*<HELPERS (functions for UX)>*/
 
   $scope.pageToggle = 0;
   $scope.names =["Milk",
@@ -85,9 +83,7 @@ app.controller ('BoardCtrl', function($scope,$timeout,$firebase,$window) {
           $scope.myPiece = {val:'o'};
         }
         $scope.obj.$save();
-        console.log($scope.obj.xIsAvailable);
-        console.log($scope.obj.oIsAvailable);
-      },300);
+      },2000);
    
    };
   $scope.start = function(){
@@ -111,17 +107,19 @@ app.controller ('BoardCtrl', function($scope,$timeout,$firebase,$window) {
     }
     //style is not returned if empty cell
   }
-  $scope.$watchCollection('[obj.playerone.ready,obj.playertwo.ready]',function(n){
-    if(n[0] && n[1]){
-      console.log('lets get to werk!!!');
+  $scope.proceedToBoard = function(){
+    $timeout(function(){
+    if($scope.obj.playerone.ready && $scope.obj.playertwo.ready){
+      $scope.pageToggle++;
     }
-  });
+  },4000);
+  }
 //
 /*< ! HELPERS>*/
 
 
 
-/*<GAME LOGIC (methods for the game itself)>*/
+/*<GAME LOGIC (functions for the game itself)>*/
 
 
 
@@ -174,7 +172,7 @@ app.controller ('BoardCtrl', function($scope,$timeout,$firebase,$window) {
 /*< ! GAME LOGIC>*/
 
 
-/*<DIRECTIVES (methods for custom markup)>*/
+/*<DIRECTIVES (functions for custom markup)>*/
 app.directive('intro',function(){
   return{
     restrict:"E",
@@ -213,6 +211,8 @@ app.directive('characters',function(){
         if(s.player.piece == s.$parent.myPiece.val && !s.player.ready){
           s.player.ready = true;
           s.$parent.$parent.obj.$save();
+
+          s.$parent.$parent.proceedToBoard();
           //SOUND EFFECT
         }
       }

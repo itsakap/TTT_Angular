@@ -110,7 +110,7 @@ app.controller ('BoardCtrl', function($scope,$timeout,$firebase,$window) {
   $scope.proceedToBoard = function(){
     $timeout(function(){
     if($scope.obj.playerone.ready && $scope.obj.playertwo.ready){
-      $scope.pageToggle++;
+      $scope.pageToggle=2;
     }
   },4000);
     $scope.$watchCollection('[obj.playerone.ready,obj.playertwo.ready]',function(n){

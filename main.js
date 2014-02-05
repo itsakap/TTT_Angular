@@ -1,3 +1,17 @@
+/*main.js*/
+
+/*CONTENTS:*/
+  /*
+
+  FIREBASE LOGIC
+  HELPERS
+  GAME LOGIC
+  DIRECTIVES
+
+  */
+/*!CONTENTS*/
+
+
 var app = angular.module("TTT",[
   "firebase"]);
 app.controller ('BoardCtrl', function($scope,$timeout,$firebase,$window) {
@@ -16,8 +30,8 @@ app.controller ('BoardCtrl', function($scope,$timeout,$firebase,$window) {
         turns:0,
         //player objects are in the cloud for access in directives, and so
         //that players can VIEW each others' properties
-        playerone:{charselection:0, nameIndex:0,piece:'x', ready:false},
-        playertwo:{charselection:-100,nameIndex:1,piece:'o',ready:false},
+        playerone:{charselection:0, nameIndex:0,piece:'x', ready:false,won:false},
+        playertwo:{charselection:-100,nameIndex:1,piece:'o',ready:false,won:false},
         
         //helpers to sync and assign player
         xIsAvailable:true,
@@ -28,6 +42,9 @@ app.controller ('BoardCtrl', function($scope,$timeout,$firebase,$window) {
         IDs = $scope.fbRoot.$getIndex();
         $scope.obj = $scope.fbRoot.$child(IDs[n]);
       });
+
+
+
   };
   //wait until everything really is loaded
   $scope.fbRoot.$on("loaded",function(value){
@@ -52,8 +69,9 @@ app.controller ('BoardCtrl', function($scope,$timeout,$firebase,$window) {
 
 /*< ! FIREBASE LOGIC>*/
 
-
-
+/*$scope.$on('$locationChangeStart',function(event) {
+  alert('this worked?');
+});*/
 /*<HELPERS (functions for UX)>*/
 
   $scope.pageToggle = 0;
@@ -84,7 +102,7 @@ app.controller ('BoardCtrl', function($scope,$timeout,$firebase,$window) {
         }
         $scope.obj.$save();
       },2000);
-   
+   //watch collection goes here?
    };
   $scope.start = function(){
     //"bind" this window to a player
@@ -106,7 +124,7 @@ app.controller ('BoardCtrl', function($scope,$timeout,$firebase,$window) {
       return {backgroundPosition:$scope.obj.playertwo.charselection+"px 0px"};
     }
     //style is not returned if empty cell
-  }
+  };
   $scope.proceedToBoard = function(){
     $timeout(function(){
     if($scope.obj.playerone.ready && $scope.obj.playertwo.ready){
@@ -114,13 +132,24 @@ app.controller ('BoardCtrl', function($scope,$timeout,$firebase,$window) {
     }
   },4000);
     $scope.$watchCollection('[obj.playerone.ready,obj.playertwo.ready]',function(n){
-      if(n[0] && n[1])
+      if(n[0] && n[1]){
         $scope.pageToggle = 2;
+        $scope.$watchCollection('[obj.playerone.won,obj.playertwo.won]',function(n){
+        if(n[0] || n[1]){
+        $scope.pageToggle = 3;
+        console.log(n[0],n[1]);
+ //       alert('trig');
+      }
     });
-  }
+      }
+    });
+  };
+$scope.werkAgain = function(){
+  alert('werk@!!!');
+};
 //
 /*< ! HELPERS>*/
-
+$scope.$on('$locationChangeStart',function(event) {});
 
 
 /*<GAME LOGIC (functions for the game itself)>*/
@@ -131,7 +160,12 @@ app.controller ('BoardCtrl', function($scope,$timeout,$firebase,$window) {
     
     $scope.obj.turns = 0; $scope.obj.playerOnesTurn=true;
     $scope.obj.board = [['','',''],['','',''],['','','']];
+    $scope.obj.playerone.winner = false;
+    $scope.obj.playertwo.winner = false;
     $scope.obj.$save();
+
+
+    
 
   };
 
@@ -145,10 +179,13 @@ app.controller ('BoardCtrl', function($scope,$timeout,$firebase,$window) {
       $scope.obj.turns++;
       $scope.obj.$save();
       endTurn(c,r,piece);
-  }
-
+    }
   };
-
+   $scope.$on('$locationChangeStart', function(event, next, current) {
+        if(!confirm(leavingPageText + "\n\nAre you sure you want to leave this page?")) {
+            event.preventDefault();
+        }
+    });
   function endTurn(c,r,p){
     //initialize some possible win conditions as true, and search for counter-examples
     var horWin = true, vertWin = true, diag1Win = true, diag2Win = true, bd = $scope.obj.board, catsGame = ($scope.obj.turns==9);
@@ -158,7 +195,7 @@ app.controller ('BoardCtrl', function($scope,$timeout,$firebase,$window) {
       if(!(c==r && bd[i][i]==p)) diag1Win = false;
       if(!(c+r==2 && bd[i][2-i]==p)) diag2Win = false;
     }
-    if(horWin || vertWin || diag1Win || diag2Win) endGame(p + ' winned!');
+    if(horWin || vertWin || diag1Win || diag2Win) endGame(p);
     else if(catsGame) endGame('cats game :(');
     else /*new turn*/ {
       $scope.obj.playerOnesTurn = !$scope.obj.playerOnesTurn;
@@ -167,9 +204,11 @@ app.controller ('BoardCtrl', function($scope,$timeout,$firebase,$window) {
   };
   function endGame (msg){
     //a slight delay which might not be necessary if we move that new game function
+    //include logic for segueing to win page
     $timeout(function(){
-      alert(msg);
-      $scope.newGame();
+      msg == 'x' ? $scope.obj.playerone.won = true : $scope.obj.playertwo.won = true;
+      $scope.obj.$save();
+      //$scope.newGame();
     },500);
   }
 });
@@ -180,18 +219,18 @@ app.controller ('BoardCtrl', function($scope,$timeout,$firebase,$window) {
 app.directive('intro',function(){
   return{
     restrict:"E",
-    templateUrl:"intro.html"
+    templateUrl:"partials/intro.html"
   } 
 })
 app.directive('characters',function(){
   return{
     restrict:"E",
-    templateUrl:"characters.html",
+    templateUrl:"partials/characters.html",
     scope:{player:"=",charname:"@"},
     link:function(s){
 
       //we can initialize the style of the opposite carousel to be a little opaque!
-      
+
       //$watch function for background position of spritesheets
       s.$watch('player.charselection',function(n){
         s.carouselstyle = {backgroundPosition: n +"px 0px"};
@@ -228,7 +267,7 @@ app.directive('characters',function(){
 app.directive('board',function(){
   return {
     restrict:"E",
-    templateUrl: "board.html",
+    templateUrl: "partials/board.html",
     link:function(s){
       s.click = function(c,r){
         s.$parent.playMove(c,r);
@@ -236,6 +275,15 @@ app.directive('board',function(){
       s.sty = function(c){
         return s.$parent.getStyle(c);
       }
+    }
+  }
+})
+app.directive('winner',function(){
+  return{
+    restrict:"E",
+    templateUrl:"partials/winner.html",
+    link:function(s,e,a){
+
     }
   }
 })

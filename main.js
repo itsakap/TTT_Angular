@@ -15,10 +15,7 @@
 var app = angular.module("TTT",[
   "firebase"]);
 app.controller ('BoardCtrl', function($scope,$timeout,$firebase,$window) {
-
-
 /*<FIREBASE LOGIC (creates the multiplayer "cloud")>*/
-
   var ref = new Firebase("https://tictactohnoshebettadont.firebaseio.com/");//this is my fb
   $scope.fbRoot = $firebase(ref);
   var initGame = function(n){
@@ -134,10 +131,14 @@ app.controller ('BoardCtrl', function($scope,$timeout,$firebase,$window) {
     $scope.$watchCollection('[obj.playerone.ready,obj.playertwo.ready]',function(n){
       if(n[0] && n[1]){
         $scope.pageToggle = 2;
-        $scope.$watchCollection('[obj.playerone.won,obj.playertwo.won]',function(n){
-        if(n[0] || n[1]){
-        $scope.pageToggle = 3;
-        console.log(n[0],n[1]);
+        $scope.$watchCollection('[obj.playerone.won,obj.playertwo.won]',function(k){
+        if(k[0] || k[1]){
+
+          $scope.obj.winner = k[0] ? $scope.obj.playerone : $scope.obj.playertwo;
+          $scope.obj.$save();
+          $scope.pageToggle = 3;
+
+        
  //       alert('trig');
       }
     });
@@ -282,7 +283,8 @@ app.directive('winner',function(){
   return{
     restrict:"E",
     templateUrl:"partials/winner.html",
-    link:function(s,e,a){
+
+    link:function($scope,e,a){
 
     }
   }

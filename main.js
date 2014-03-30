@@ -35,6 +35,7 @@ app.controller ('BoardCtrl', function($scope,$timeout,$firebase,$window) {
         oIsAvailable:true
 
       });
+      //handles changes in fbroot
       $scope.fbRoot.$on("change",function(){
         IDs = $scope.fbRoot.$getIndex();
         $scope.obj = $scope.fbRoot.$child(IDs[n]);
@@ -65,10 +66,17 @@ app.controller ('BoardCtrl', function($scope,$timeout,$firebase,$window) {
   });
 
 /*< ! FIREBASE LOGIC>*/
+$window.onbeforeunload = function (event) {
+  var message = 'Sure you want to leave?';
+  if (typeof event == 'undefined') {
+    event = window.event;
+  }
+  if (event) {
+    event.returnValue = message;
+  }
+  return message;
+}
 
-/*$scope.$on('$locationChangeStart',function(event) {
-  alert('this worked?');
-});*/
 /*<HELPERS (functions for UX)>*/
 
   $scope.pageToggle = 0;
@@ -103,6 +111,7 @@ app.controller ('BoardCtrl', function($scope,$timeout,$firebase,$window) {
    };
   $scope.start = function(){
     //"bind" this window to a player
+
     if($scope.pageToggle ==0){
       $scope.pageToggle++;
     }
@@ -133,10 +142,10 @@ app.controller ('BoardCtrl', function($scope,$timeout,$firebase,$window) {
         $scope.pageToggle = 2;
         $scope.$watchCollection('[obj.playerone.won,obj.playertwo.won]',function(k){
         if(k[0] || k[1]){
-
           $scope.obj.winner = k[0] ? $scope.obj.playerone : $scope.obj.playertwo;
           $scope.obj.$save();
           $scope.pageToggle = 3;
+          k[0] = k[1] = false; //this should keep firebase from janking the app
 
         
  //       alert('trig');
@@ -201,6 +210,7 @@ $scope.$on('$locationChangeStart',function(event) {});
     else /*new turn*/ {
       $scope.obj.playerOnesTurn = !$scope.obj.playerOnesTurn;
       $scope.obj.$save();
+     
     } 
   };
   function endGame (msg){

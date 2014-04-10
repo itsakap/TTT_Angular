@@ -64,16 +64,14 @@ app.factory("GameCreator", ["$q","$firebase",function($q, $firebase){
         }
       });
     }    
-  });
   return deferred.promise;
+  });
 }])
  
 app.controller ('BoardCtrl', function($scope,$timeout,GameCreator,$window) {
   GameCreator.then(function(returnedData){
   /*<FIREBASE LOGIC (creates the multiplayer "cloud")>*/
     returnedData.$on('loaded',function(){
-
-      console.log(returnedData);
       $scope.game = returnedData;
       var piece;
       if(returnedData.oIsAvailable == true){
@@ -82,13 +80,14 @@ app.controller ('BoardCtrl', function($scope,$timeout,GameCreator,$window) {
       else {
         piece = 'o';
       }
-      $scope.myPiece = {val:piece};
+      $scope.myPiece = {
+        val:piece
+      };
 
     $window.onbeforeunload = function (event) {
       //delete this game from the firebase I/O
-  
-        returnedData.$remove();
-        return null;
+      returnedData.$remove();
+      return null;
     }
   /*< ! FIREBASE LOGIC>*/
 

@@ -64,8 +64,8 @@ app.factory("GameCreator", ["$q","$firebase",function($q, $firebase){
         }
       });
     }    
-  return deferred.promise;
   });
+  return deferred.promise;
 }])
  
 app.controller ('BoardCtrl', function($scope,$timeout,GameCreator,$window) {

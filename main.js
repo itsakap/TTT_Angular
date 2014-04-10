@@ -187,11 +187,7 @@ app.controller ('BoardCtrl', function($scope,$timeout,GameCreator,$window) {
       endTurn(c,r,piece);
     }
   };
-   $scope.$on('$locationChangeStart', function(event, next, current) {
-        if(!confirm(leavingPageText + "\n\nAre you sure you want to leave this page?")) {
-            event.preventDefault();
-        }
-    });
+
   function endTurn(c,r,p){
     //initialize some possible win conditions as true, and search for counter-examples
     var horWin = true, vertWin = true, diag1Win = true, diag2Win = true, bd = $scope.game.board, catsGame = ($scope.game.turns==9);

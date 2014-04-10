@@ -1,5 +1,5 @@
 <ul>
-  <li ng-repeat = "row in obj.board track by $index">
+  <li ng-repeat = "row in game.board track by $index">
     <span  x-ng-repeat = "column in row track by $index"
     x-ng-class = "{x : column=='x',
                 o : column=='o'}"

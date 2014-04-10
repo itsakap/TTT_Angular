@@ -137,10 +137,10 @@ app.controller ('BoardCtrl', function($scope,$timeout,GameCreator,$window) {
         $scope.pageToggle=2;
       }
     },4000);
-      $scope.$watchCollection('[obj.playerone.ready,obj.playertwo.ready]',function(n){
+      $scope.$watchCollection('[game.playerone.ready,game.playertwo.ready]',function(n){
         if(n[0] && n[1]){
           $scope.pageToggle = 2;
-          $scope.$watchCollection('[obj.playerone.won,obj.playertwo.won]',function(k){
+          $scope.$watchCollection('[game.playerone.won,game.playertwo.won]',function(k){
           if(k[0] || k[1]){
             $scope.game.winner = k[0] ? $scope.game.playerone : $scope.game.playertwo;
             $scope.game.$save();

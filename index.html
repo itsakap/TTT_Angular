@@ -16,11 +16,11 @@
         <intro  x-ng-switch-when="0"></intro>
         <div id = "characters-page" x-ng-switch-when = "1">
           <div class = "clearfix">
-            <characters charname = "{{names[obj.playerone.nameIndex]}}" player = "obj.playerone"></characters>
+            <characters charname = "{{names[game.playerone.nameIndex]}}" player = "game.playerone"></characters>
           
             <h2>VS</h2>
           
-            <characters charname = "{{names[obj.playertwo.nameIndex]}}"player = "obj.playertwo"></characters>
+            <characters charname = "{{names[game.playertwo.nameIndex]}}"player = "game.playertwo"></characters>
           </div>
           
         </div>

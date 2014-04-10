@@ -1,4 +1,4 @@
-/*main.js*/
+// main.js*/
 
 /*CONTENTS:*/
   /*
@@ -14,101 +14,100 @@
 
 var app = angular.module("TTT",[
   "firebase"]);
-app.controller ('BoardCtrl', function($scope,$timeout,$firebase,$window) {
-/*<FIREBASE LOGIC (creates the multiplayer "cloud")>*/
+
+app.factory("GameCreator", ["$q","$firebase",function($q, $firebase){
+  var deferred = $q.defer();
+  //note that you can navigate to folders
   var ref = new Firebase("https://tictactohnoshebettadont.firebaseio.com/");//this is my fb
-  $scope.fbRoot = $firebase(ref);
-  var initGame = function(n){
-    $scope.fbRoot.$add({
-
-        //the board's state and turns, shared by all users
-        board:[['','',''],['','',''],['','','']],
-        playerOnesTurn:true,
-        turns:0,
-        //player objects are in the cloud for access in directives, and so
-        //that players can VIEW each others' properties
-        playerone:{charselection:0, nameIndex:0,piece:'x', ready:false,won:false},
-        playertwo:{charselection:-100,nameIndex:1,piece:'o',ready:false,won:false},
-        
-        //helpers to sync and assign player
-        xIsAvailable:true,
-        oIsAvailable:true
-
+  $firebase(ref).$on("loaded",function(value){
+    var games = $firebase(ref);
+    var IDs = games.$getIndex();
+    var initGame = function(n){
+      games.$add({
+          //the board's state and turns, shared by all users
+          board:[['','',''],['','',''],['','','']],
+          playerOnesTurn:true,
+          turns:0,
+          //player objects are in the cloud for access in directives, and so
+          //that players can VIEW each others' properties
+          playerone:{charselection:0, nameIndex:0,piece:'x', ready:false,won:false},
+          playertwo:{charselection:-100,nameIndex:1,piece:'o',ready:false,won:false},
+          //helpers to sync and assign player
+          xIsAvailable:false,
+          oIsAvailable:true
       });
-      //handles changes in fbroot
-      $scope.fbRoot.$on("change",function(){
-        IDs = $scope.fbRoot.$getIndex();
-        $scope.obj = $scope.fbRoot.$child(IDs[n]);
+      //my opponent did something.  His/her actions need to appear on my screen.
+      games.$on("change",function(){  
+        deferred.resolve( games.$child(games.$getIndex()[n]) );
       });
-
-
-
-  };
-  //wait until everything really is loaded
-  $scope.fbRoot.$on("loaded",function(value){
-    IDs = $scope.fbRoot.$getIndex();
-
-    if(IDs.length == 0){  
-      //no board --> let's build one!
-      initGame(0);
+    };
+    var n = IDs.length;
+    //if no games, then build a game
+    if(n == 0){
+      initGame(n);
     }
-    else{ // at least one game exists
-      var last = IDs.length;
-      $scope.loaded = false;
-      $scope.obj = $scope.fbRoot.$child(IDs[last-1]);
-      $timeout(function(){
-        if(!$scope.obj.oIsAvailable){
-          initGame(last);
-          
+    //else, find out if either a game is available, or a new game needs to be built
+    else{
+      //if last - 1 has a spot, put me in that game, else create me a new game
+      var checkThisGame = games.$child(IDs[n-1]);
+      checkThisGame.$on('loaded',function(){
+        if(checkThisGame.oIsAvailable == true){
+          checkThisGame.oIsAvailable = false;
+          checkThisGame.$save();
+          deferred.resolve(checkThisGame);
         }
-      },1);
-    }
+        else{
+          initGame(n);
+        }
+      });
+    }    
   });
+  return deferred.promise;
+}])
+ 
+app.controller ('BoardCtrl', function($scope,$timeout,GameCreator,$window) {
+  /*<FIREBASE LOGIC (creates the multiplayer "cloud")>*/
+  GameCreator.then(function(returnedData){
+    returnedData.$on('loaded',function(){
 
-/*< ! FIREBASE LOGIC>*/
-$window.onbeforeunload = function (event) {
-  var message = 'Sure you want to leave?';
-  if (typeof event == 'undefined') {
-    event = window.event;
-  }
-  if (event) {
-    event.returnValue = message;
-  }
-  return message;
-}
+      console.log(returnedData);
+      $scope.game = returnedData;
+      var piece;
+      if(returnedData.oIsAvailable == true){
+        piece = 'x';
+      }
+      else {
+        piece = 'o';
+      }
+      $scope.myPiece = {val:piece};
 
-/*<HELPERS (functions for UX)>*/
+    /*< ! FIREBASE LOGIC>*/
+    $window.onbeforeunload = function (event) {
+      //delete this game from the firebase I/O
+  
+        returnedData.$remove();
+        return null;
+    }
 
-  $scope.pageToggle = 0;
-  $scope.names =["Milk",
-                 "April Carrion",
-                 "Vi Vacious",
-                 "Adore Delano",
-                 "Joslyn Fox",
-                 "Bianca del Rio",
-                 "Courtney Act",
-                 "Miss Darienne Lake",
-                 "Laganja Estranja",
-                 "Gia Gunn",
-                 "Magnolia Crawford",
-                 "Trinity K. Bonet",
-                 "Kelly Mantle",
-                 "Ben DeLaCreme"
-                ];
-  $scope.getPiece =function(){
-      $timeout(function(){
-        if($scope.obj.xIsAvailable){
-          $scope.obj.xIsAvailable = false;
-          $scope.myPiece = {val:'x'};
-        }
-        else if ($scope.obj.oIsAvailable){
-          $scope.obj.oIsAvailable  = false;
-          $scope.myPiece = {val:'o'};
-        }
-        $scope.obj.$save();
-      },2000);
-   //watch collection goes here?
-   };
+  /*<HELPERS (functions for UX)>*/
+
+    $scope.pageToggle = 0;
+    $scope.names =["Milk",
+                   "April Carrion",
+                   "Vi Vacious",
+                   "Adore Delano",
+                   "Joslyn Fox",
+                   "Bianca del Rio",
+                   "Courtney Act",
+                   "Miss Darienne Lake",
+                   "Laganja Estranja",
+                   "Gia Gunn",
+                   "Magnolia Crawford",
+                   "Trinity K. Bonet",
+                   "Kelly Mantle",
+                   "Ben DeLaCreme"
+                  ];
+
   $scope.start = function(){
     //"bind" this window to a player
 
@@ -123,17 +122,17 @@ $window.onbeforeunload = function (event) {
 
   $scope.getStyle = function(c){
     //verify that we have added this player's scope to the turn.
-    if(c=='x' && $scope.obj.playerone != undefined){
-      return {backgroundPosition:$scope.obj.playerone.charselection+"px 0px"};
+    if(c=='x' && $scope.game.playerone != undefined){
+      return {backgroundPosition:$scope.game.playerone.charselection+"px 0px"};
     }
-    if(c=='o' && $scope.obj.playertwo != undefined){
-      return {backgroundPosition:$scope.obj.playertwo.charselection+"px 0px"};
+    if(c=='o' && $scope.game.playertwo != undefined){
+      return {backgroundPosition:$scope.game.playertwo.charselection+"px 0px"};
     }
     //style is not returned if empty cell
   };
   $scope.proceedToBoard = function(){
     $timeout(function(){
-    if($scope.obj.playerone.ready && $scope.obj.playertwo.ready){
+    if($scope.game.playerone.ready && $scope.game.playertwo.ready){
       $scope.pageToggle=2;
     }
   },4000);
@@ -142,8 +141,8 @@ $window.onbeforeunload = function (event) {
         $scope.pageToggle = 2;
         $scope.$watchCollection('[obj.playerone.won,obj.playertwo.won]',function(k){
         if(k[0] || k[1]){
-          $scope.obj.winner = k[0] ? $scope.obj.playerone : $scope.obj.playertwo;
-          $scope.obj.$save();
+          $scope.game.winner = k[0] ? $scope.game.playerone : $scope.game.playertwo;
+          $scope.game.$save();
           $scope.pageToggle = 3;
           k[0] = k[1] = false; //this should keep firebase from janking the app
 
@@ -159,7 +158,6 @@ $scope.werkAgain = function(){
 };
 //
 /*< ! HELPERS>*/
-$scope.$on('$locationChangeStart',function(event) {});
 
 
 /*<GAME LOGIC (functions for the game itself)>*/
@@ -168,11 +166,11 @@ $scope.$on('$locationChangeStart',function(event) {});
 
   $scope.newGame = function(){
     
-    $scope.obj.turns = 0; $scope.obj.playerOnesTurn=true;
-    $scope.obj.board = [['','',''],['','',''],['','','']];
-    $scope.obj.playerone.winner = false;
-    $scope.obj.playertwo.winner = false;
-    $scope.obj.$save();
+    $scope.game.turns = 0; $scope.game.playerOnesTurn=true;
+    $scope.game.board = [['','',''],['','',''],['','','']];
+    $scope.game.playerone.winner = false;
+    $scope.game.playertwo.winner = false;
+    $scope.game.$save();
 
 
     
@@ -180,14 +178,14 @@ $scope.$on('$locationChangeStart',function(event) {});
   };
 
   $scope.playMove = function(c,r){
-    var p = $scope.obj.playerOnesTurn;
+    var p = $scope.game.playerOnesTurn;
     var piece = p ? 'x' : 'o';
 
     //if cell is empty and the piece I got equals piece predicated on player turn...
-    if(($scope.obj.board[c][r]=='') && ($scope.myPiece.val == piece)){
-      $scope.obj.board[c][r] = piece;
-      $scope.obj.turns++;
-      $scope.obj.$save();
+    if(($scope.game.board[c][r]=='') && ($scope.myPiece.val == piece)){
+      $scope.game.board[c][r] = piece;
+      $scope.game.turns++;
+      $scope.game.$save();
       endTurn(c,r,piece);
     }
   };
@@ -198,7 +196,7 @@ $scope.$on('$locationChangeStart',function(event) {});
     });
   function endTurn(c,r,p){
     //initialize some possible win conditions as true, and search for counter-examples
-    var horWin = true, vertWin = true, diag1Win = true, diag2Win = true, bd = $scope.obj.board, catsGame = ($scope.obj.turns==9);
+    var horWin = true, vertWin = true, diag1Win = true, diag2Win = true, bd = $scope.game.board, catsGame = ($scope.game.turns==9);
     for (var i = 0; i < 3; i++){
       if(bd[i][r]!=p) horWin = false;
       if(bd[c][i]!=p) vertWin = false;
@@ -208,8 +206,8 @@ $scope.$on('$locationChangeStart',function(event) {});
     if(horWin || vertWin || diag1Win || diag2Win) endGame(p);
     else if(catsGame) endGame('cats game :(');
     else /*new turn*/ {
-      $scope.obj.playerOnesTurn = !$scope.obj.playerOnesTurn;
-      $scope.obj.$save();
+      $scope.game.playerOnesTurn = !$scope.game.playerOnesTurn;
+      $scope.game.$save();
      
     } 
   };
@@ -217,11 +215,13 @@ $scope.$on('$locationChangeStart',function(event) {});
     //a slight delay which might not be necessary if we move that new game function
     //include logic for segueing to win page
     $timeout(function(){
-      msg == 'x' ? $scope.obj.playerone.won = true : $scope.obj.playertwo.won = true;
-      $scope.obj.$save();
+      msg == 'x' ? $scope.game.playerone.won = true : $scope.game.playertwo.won = true;
+      $scope.game.$save();
       //$scope.newGame();
     },500);
   }
+  });
+});
 });
 /*< ! GAME LOGIC>*/
 
@@ -259,13 +259,13 @@ app.directive('characters',function(){
           //traverse and possibly wrap around name array
           s.player.nameIndex += newIndex; s.player.nameIndex %=14;
           //send data to cloud
-          s.$parent.$parent.obj.$save();
+          s.$parent.$parent.game.$save();
         }
       };
       s.werk = function(){
         if(s.player.piece == s.$parent.myPiece.val && !s.player.ready){
           s.player.ready = true;
-          s.$parent.$parent.obj.$save();
+          s.$parent.$parent.game.$save();
 
           s.$parent.$parent.proceedToBoard();
           //SOUND EFFECT
@@ -299,4 +299,4 @@ app.directive('winner',function(){
     }
   }
 })
-/*< ! DIRECTIVES>*/
+//< ! DIRECTIVES>

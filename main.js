@@ -21,8 +21,11 @@ app.factory("GameCreator", ["$q","$firebase",function($q, $firebase){
   var ref = new Firebase("https://tictactohnoshebettadont.firebaseio.com/");//this is my fb
   $firebase(ref).$on("loaded",function(value){
     var games = $firebase(ref);
+    //get keys for all games
     var IDs = games.$getIndex();
+    //function for creating a new game
     var initGame = function(n){
+      //add a new game to the list of games
       games.$add({
           //the board's state and turns, shared by all users
           board:[['','',''],['','',''],['','','']],
@@ -66,8 +69,8 @@ app.factory("GameCreator", ["$q","$firebase",function($q, $firebase){
 }])
  
 app.controller ('BoardCtrl', function($scope,$timeout,GameCreator,$window) {
-  /*<FIREBASE LOGIC (creates the multiplayer "cloud")>*/
   GameCreator.then(function(returnedData){
+  /*<FIREBASE LOGIC (creates the multiplayer "cloud")>*/
     returnedData.$on('loaded',function(){
 
       console.log(returnedData);
@@ -81,13 +84,13 @@ app.controller ('BoardCtrl', function($scope,$timeout,GameCreator,$window) {
       }
       $scope.myPiece = {val:piece};
 
-    /*< ! FIREBASE LOGIC>*/
     $window.onbeforeunload = function (event) {
       //delete this game from the firebase I/O
   
         returnedData.$remove();
         return null;
     }
+  /*< ! FIREBASE LOGIC>*/
 
   /*<HELPERS (functions for UX)>*/
 
@@ -108,56 +111,51 @@ app.controller ('BoardCtrl', function($scope,$timeout,GameCreator,$window) {
                    "Ben DeLaCreme"
                   ];
 
-  $scope.start = function(){
-    //"bind" this window to a player
-
-    if($scope.pageToggle ==0){
-      $scope.pageToggle++;
-    }
-    else {
-      //shouldn't happen
-      $scope.pageToggle = 2;
-    }
-  };
-
-  $scope.getStyle = function(c){
-    //verify that we have added this player's scope to the turn.
-    if(c=='x' && $scope.game.playerone != undefined){
-      return {backgroundPosition:$scope.game.playerone.charselection+"px 0px"};
-    }
-    if(c=='o' && $scope.game.playertwo != undefined){
-      return {backgroundPosition:$scope.game.playertwo.charselection+"px 0px"};
-    }
-    //style is not returned if empty cell
-  };
-  $scope.proceedToBoard = function(){
-    $timeout(function(){
-    if($scope.game.playerone.ready && $scope.game.playertwo.ready){
-      $scope.pageToggle=2;
-    }
-  },4000);
-    $scope.$watchCollection('[obj.playerone.ready,obj.playertwo.ready]',function(n){
-      if(n[0] && n[1]){
+    $scope.start = function(){
+      //"bind" this window to a player
+      if($scope.pageToggle ==0){
+        $scope.pageToggle++;
+      }
+      else {
+        //shouldn't happen
         $scope.pageToggle = 2;
-        $scope.$watchCollection('[obj.playerone.won,obj.playertwo.won]',function(k){
-        if(k[0] || k[1]){
-          $scope.game.winner = k[0] ? $scope.game.playerone : $scope.game.playertwo;
-          $scope.game.$save();
-          $scope.pageToggle = 3;
-          k[0] = k[1] = false; //this should keep firebase from janking the app
+      }
+    };
 
-        
- //       alert('trig');
+    $scope.getStyle = function(c){
+      //verify that we have added this player's scope to the turn.
+      if(c=='x' && $scope.game.playerone != undefined){
+        return {backgroundPosition:$scope.game.playerone.charselection+"px 0px"};
       }
-    });
+      if(c=='o' && $scope.game.playertwo != undefined){
+        return {backgroundPosition:$scope.game.playertwo.charselection+"px 0px"};
       }
-    });
-  };
-$scope.werkAgain = function(){
-  alert('werk@!!!');
-};
-//
-/*< ! HELPERS>*/
+      //style is not returned if empty cell
+    };
+    $scope.proceedToBoard = function(){
+      $timeout(function(){
+      if($scope.game.playerone.ready && $scope.game.playertwo.ready){
+        $scope.pageToggle=2;
+      }
+    },4000);
+      $scope.$watchCollection('[obj.playerone.ready,obj.playertwo.ready]',function(n){
+        if(n[0] && n[1]){
+          $scope.pageToggle = 2;
+          $scope.$watchCollection('[obj.playerone.won,obj.playertwo.won]',function(k){
+          if(k[0] || k[1]){
+            $scope.game.winner = k[0] ? $scope.game.playerone : $scope.game.playertwo;
+            $scope.game.$save();
+            $scope.pageToggle = 3;
+            k[0] = k[1] = false; //this should keep firebase from janking the app
+        }
+      });
+        }
+      });
+    };
+    $scope.werkAgain = function(){
+      alert('werk@!!!');
+    };
+  /*< ! HELPERS>*/
 
 
 /*<GAME LOGIC (functions for the game itself)>*/

@@ -70,7 +70,7 @@ app.factory("GameCreator", ["$q","$firebase",function($q, $firebase){
  
 app.controller ('BoardCtrl', function($scope,$timeout,GameCreator,$window) {
   GameCreator.then(function(returnedData){
-  /*<FIREBASE LOGIC (creates the multiplayer "cloud")>*/
+    /*<FIREBASE LOGIC (creates the multiplayer "cloud")>*/
     returnedData.$on('loaded',function(){
       $scope.game = returnedData;
       var piece;
@@ -84,138 +84,138 @@ app.controller ('BoardCtrl', function($scope,$timeout,GameCreator,$window) {
         val:piece
       };
 
-    $window.onbeforeunload = function (event) {
-      //delete this game from the firebase I/O
-      returnedData.$remove();
-      console.log('hey');
-      return 'asdf';
-    }
-  /*< ! FIREBASE LOGIC>*/
+      $window.onbeforeunload = function (event) {
+        //delete this game from the firebase I/O
+        returnedData.$remove();
+        console.log('hey');
+        return 'asdf';
+      }
+    /*< ! FIREBASE LOGIC>*/
 
-  /*<HELPERS (functions for UX)>*/
+    /*<HELPERS (functions for UX)>*/
 
-    $scope.pageToggle = 0;
-    $scope.names =["Milk",
-                   "April Carrion",
-                   "Vi Vacious",
-                   "Adore Delano",
-                   "Joslyn Fox",
-                   "Bianca del Rio",
-                   "Courtney Act",
-                   "Miss Darienne Lake",
-                   "Laganja Estranja",
-                   "Gia Gunn",
-                   "Magnolia Crawford",
-                   "Trinity K. Bonet",
-                   "Kelly Mantle",
-                   "Ben DeLaCreme"
-                  ];
+      $scope.pageToggle = 0;
+      $scope.names =["Milk",
+                     "April Carrion",
+                     "Vi Vacious",
+                     "Adore Delano",
+                     "Joslyn Fox",
+                     "Bianca del Rio",
+                     "Courtney Act",
+                     "Miss Darienne Lake",
+                     "Laganja Estranja",
+                     "Gia Gunn",
+                     "Magnolia Crawford",
+                     "Trinity K. Bonet",
+                     "Kelly Mantle",
+                     "Ben DeLaCreme"
+                    ];
 
-    $scope.start = function(){
-      //"bind" this window to a player
-      if($scope.pageToggle ==0){
-        $scope.pageToggle++;
-      }
-      else {
-        //shouldn't happen
-        $scope.pageToggle = 2;
-      }
-    };
-
-    $scope.getStyle = function(c){
-      //verify that we have added this player's scope to the turn.
-      if(c=='x' && $scope.game.playerone != undefined){
-        return {backgroundPosition:$scope.game.playerone.charselection+"px 0px"};
-      }
-      if(c=='o' && $scope.game.playertwo != undefined){
-        return {backgroundPosition:$scope.game.playertwo.charselection+"px 0px"};
-      }
-      //style is not returned if empty cell
-    };
-    $scope.proceedToBoard = function(){
-      $timeout(function(){
-      if($scope.game.playerone.ready && $scope.game.playertwo.ready){
-        $scope.pageToggle=2;
-      }
-    },4000);
-      $scope.$watchCollection('[game.playerone.ready,game.playertwo.ready]',function(n){
-        if(n[0] && n[1]){
+      $scope.start = function(){
+        //"bind" this window to a player
+        if($scope.pageToggle ==0){
+          $scope.pageToggle++;
+        }
+        else {
+          //shouldn't happen
           $scope.pageToggle = 2;
-          $scope.$watchCollection('[game.playerone.won,game.playertwo.won]',function(k){
-          if(k[0] || k[1]){
-            $scope.game.winner = k[0] ? $scope.game.playerone : $scope.game.playertwo;
-            $scope.game.$save();
-            $scope.pageToggle = 3;
-            k[0] = k[1] = false; //this should keep firebase from janking the app
         }
-      });
+      };
+
+      $scope.getStyle = function(c){
+        //verify that we have added this player's scope to the turn.
+        if(c=='x' && $scope.game.playerone != undefined){
+          return {backgroundPosition:$scope.game.playerone.charselection+"px 0px"};
         }
-      });
-    };
-    $scope.werkAgain = function(){
-      alert('werk@!!!');
-    };
-  /*< ! HELPERS>*/
+        if(c=='o' && $scope.game.playertwo != undefined){
+          return {backgroundPosition:$scope.game.playertwo.charselection+"px 0px"};
+        }
+        //style is not returned if empty cell
+      };
+      $scope.proceedToBoard = function(){
+        $timeout(function(){
+        if($scope.game.playerone.ready && $scope.game.playertwo.ready){
+          $scope.pageToggle=2;
+        }
+      },4000);
+        $scope.$watchCollection('[game.playerone.ready,game.playertwo.ready]',function(n){
+          if(n[0] && n[1]){
+            $scope.pageToggle = 2;
+            $scope.$watchCollection('[game.playerone.won,game.playertwo.won]',function(k){
+            if(k[0] || k[1]){
+              $scope.game.winner = k[0] ? $scope.game.playerone : $scope.game.playertwo;
+              $scope.game.$save();
+              $scope.pageToggle = 3;
+              k[0] = k[1] = false; //this should keep firebase from janking the app
+          }
+        });
+          }
+        });
+      };
+      $scope.werkAgain = function(){
+        alert('werk@!!!');
+      };
+      /*< ! HELPERS>*/
 
 
-/*<GAME LOGIC (functions for the game itself)>*/
+      /*<GAME LOGIC (functions for the game itself)>*/
 
 
 
-  $scope.newGame = function(){
-    
-    $scope.game.turns = 0; $scope.game.playerOnesTurn=true;
-    $scope.game.board = [['','',''],['','',''],['','','']];
-    $scope.game.playerone.winner = false;
-    $scope.game.playertwo.winner = false;
-    $scope.game.$save();
+      $scope.newGame = function(){
+        
+        $scope.game.turns = 0; $scope.game.playerOnesTurn=true;
+        $scope.game.board = [['','',''],['','',''],['','','']];
+        $scope.game.playerone.winner = false;
+        $scope.game.playertwo.winner = false;
+        $scope.game.$save();
 
 
-    
+        
 
-  };
+      };
 
-  $scope.playMove = function(c,r){
-    var p = $scope.game.playerOnesTurn;
-    var piece = p ? 'x' : 'o';
+      $scope.playMove = function(c,r){
+        var p = $scope.game.playerOnesTurn;
+        var piece = p ? 'x' : 'o';
 
-    //if cell is empty and the piece I got equals piece predicated on player turn...
-    if(($scope.game.board[c][r]=='') && ($scope.myPiece.val == piece)){
-      $scope.game.board[c][r] = piece;
-      $scope.game.turns++;
-      $scope.game.$save();
-      endTurn(c,r,piece);
-    }
-  };
+        //if cell is empty and the piece I got equals piece predicated on player turn...
+        if(($scope.game.board[c][r]=='') && ($scope.myPiece.val == piece)){
+          $scope.game.board[c][r] = piece;
+          $scope.game.turns++;
+          $scope.game.$save();
+          endTurn(c,r,piece);
+        }
+      };
 
-  function endTurn(c,r,p){
-    //initialize some possible win conditions as true, and search for counter-examples
-    var horWin = true, vertWin = true, diag1Win = true, diag2Win = true, bd = $scope.game.board, catsGame = ($scope.game.turns==9);
-    for (var i = 0; i < 3; i++){
-      if(bd[i][r]!=p) horWin = false;
-      if(bd[c][i]!=p) vertWin = false;
-      if(!(c==r && bd[i][i]==p)) diag1Win = false;
-      if(!(c+r==2 && bd[i][2-i]==p)) diag2Win = false;
-    }
-    if(horWin || vertWin || diag1Win || diag2Win) endGame(p);
-    else if(catsGame) endGame('cats game :(');
-    else /*new turn*/ {
-      $scope.game.playerOnesTurn = !$scope.game.playerOnesTurn;
-      $scope.game.$save();
-     
-    } 
-  };
-  function endGame (msg){
-    //a slight delay which might not be necessary if we move that new game function
-    //include logic for segueing to win page
-    $timeout(function(){
-      msg == 'x' ? $scope.game.playerone.won = true : $scope.game.playertwo.won = true;
-      $scope.game.$save();
-      //$scope.newGame();
-    },500);
-  }
+      function endTurn(c,r,p){
+        //initialize some possible win conditions as true, and search for counter-examples
+        var horWin = true, vertWin = true, diag1Win = true, diag2Win = true, bd = $scope.game.board, catsGame = ($scope.game.turns==9);
+        for (var i = 0; i < 3; i++){
+          if(bd[i][r]!=p) horWin = false;
+          if(bd[c][i]!=p) vertWin = false;
+          if(!(c==r && bd[i][i]==p)) diag1Win = false;
+          if(!(c+r==2 && bd[i][2-i]==p)) diag2Win = false;
+        }
+        if(horWin || vertWin || diag1Win || diag2Win) endGame(p);
+        else if(catsGame) endGame('cats game :(');
+        else /*new turn*/ {
+          $scope.game.playerOnesTurn = !$scope.game.playerOnesTurn;
+          $scope.game.$save();
+         
+        } 
+      };
+      function endGame (msg){
+        //a slight delay which might not be necessary if we move that new game function
+        //include logic for segueing to win page
+        $timeout(function(){
+          msg == 'x' ? $scope.game.playerone.won = true : $scope.game.playertwo.won = true;
+          $scope.game.$save();
+          //$scope.newGame();
+        },500);
+      }
+    });
   });
-});
 });
 /*< ! GAME LOGIC>*/
 

@@ -88,7 +88,7 @@ app.controller ('BoardCtrl', function($scope,$timeout,GameCreator,$window) {
         //delete this game from the firebase I/O
         returnedData.$remove();
         console.log('hey');
-        return 'asdf';
+        return null;
       }
     /*< ! FIREBASE LOGIC>*/
 
@@ -158,7 +158,7 @@ app.controller ('BoardCtrl', function($scope,$timeout,GameCreator,$window) {
       /*< ! HELPERS>*/
 
 
-      /*<GAME LOGIC (functions for the game itself)>*/
+     / *<GAME LOGIC (functions for the game itself)>*/
 
 
 

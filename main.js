@@ -87,7 +87,8 @@ app.controller ('BoardCtrl', function($scope,$timeout,GameCreator,$window) {
     $window.onbeforeunload = function (event) {
       //delete this game from the firebase I/O
       returnedData.$remove();
-      return null;
+      console.log('hey');
+      return 'asdf';
     }
   /*< ! FIREBASE LOGIC>*/
 

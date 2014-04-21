@@ -87,7 +87,6 @@ app.controller ('BoardCtrl', function($scope,$timeout,GameCreator,$window) {
       $window.onbeforeunload = function (event) {
         //delete this game from the firebase I/O
         returnedData.$remove();
-        console.log('hey');
         return null;
       }
     /*< ! FIREBASE LOGIC>*/
@@ -134,10 +133,10 @@ app.controller ('BoardCtrl', function($scope,$timeout,GameCreator,$window) {
       };
       $scope.proceedToBoard = function(){
         $timeout(function(){
-        if($scope.game.playerone.ready && $scope.game.playertwo.ready){
-          $scope.pageToggle=2;
-        }
-      },4000);
+          if($scope.game.playerone.ready && $scope.game.playertwo.ready){
+            $scope.pageToggle=2;
+          }
+        },4000);
         $scope.$watchCollection('[game.playerone.ready,game.playertwo.ready]',function(n){
           if(n[0] && n[1]){
             $scope.pageToggle = 2;
@@ -153,23 +152,26 @@ app.controller ('BoardCtrl', function($scope,$timeout,GameCreator,$window) {
         });
       };
       $scope.werkAgain = function(){
-        alert('werk@!!!');
+        //reset all of the shit and start a new game
+        $scope.newGame();
       };
       /*< ! HELPERS>*/
 
 
-     / *<GAME LOGIC (functions for the game itself)>*/
+     /*<GAME LOGIC (functions for the game itself)>*/
 
 
 
       $scope.newGame = function(){
-        
-        $scope.game.turns = 0; $scope.game.playerOnesTurn=true;
-        $scope.game.board = [['','',''],['','',''],['','','']];
-        $scope.game.playerone.winner = false;
-        $scope.game.playertwo.winner = false;
-        $scope.game.$save();
-
+        if($scope.game.turns != 0){
+          $scope.game.turns = 0; $scope.game.playerOnesTurn=true;
+          $scope.game.board = [['','',''],['','',''],['','','']];
+          $scope.game.playerone.won = false;
+          $scope.game.playertwo.won = false;
+          $scope.game.winner = null;
+          $scope.game.$save();
+        }
+        $scope.pageToggle = 2;
 
         
 

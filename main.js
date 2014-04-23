@@ -173,7 +173,7 @@ app.controller ('BoardCtrl', function($scope,$timeout,GameCreator,$window) {
         }
         $timeout(function(){
           $scope.pageToggle = 2;
-        },3000);
+        },1000);
         
 
       };

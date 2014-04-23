@@ -171,8 +171,9 @@ app.controller ('BoardCtrl', function($scope,$timeout,GameCreator,$window) {
           $scope.game.winner = null;
           $scope.game.$save();
         }
-        $scope.pageToggle = 2;
-
+        $timeout(function(){
+          $scope.pageToggle = 2;
+        },3000);
         
 
       };

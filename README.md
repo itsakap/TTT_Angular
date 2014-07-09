@@ -12,4 +12,4 @@ RuPaul's Drag Race-themed Tic Tac Toe (must run on server)
 
 Firebase automatically creates a game for a visitor or places a visitor in an existing game.  Should you enter a game and later navigate away from the page, Firebase will also delete your game.
 
-There are plans to revive this project in time for Season 8, if enough wo/manpower can be summoned to assemble the many voiceovers needed.  Also possible: a different multiplayer game.
+There are plans to revive this project in time for Season 8, if enough wo/manpower can be summoned to compile the many voiceover mp3 files needed.  Also possible: a different multiplayer game.

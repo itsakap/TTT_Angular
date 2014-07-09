@@ -10,12 +10,6 @@ RuPaul's Drag Race-themed Tic Tac Toe (must run on server)
 (Plenty of egghead.io-watching preceded the creation of this unique Tic Tac Toe game.)
 
 
-I want a version of which I'm VERY proud in the next two weeks, in order to:
+Firebase automatically creates a game for a visitor or places a visitor in an existing game.  Should you enter a game and later navigate away from the page, Firebase will also delete your game.
 
-1. Tweet it to RuPaul, and
-2. Get her to retweet it.
-
-Sound good?
-
-Let's do it.
-
+There are plans to revive this project in time for Season 8, if enough wo/manpower can be summoned to assemble the many voiceovers needed.  Also possible: a different multiplayer game.
